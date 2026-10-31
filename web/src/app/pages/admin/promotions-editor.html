@@ -1,0 +1,120 @@
+<header class="top">
+  <div>
+    <h1>Promoted topics</h1>
+    <p>These cards appear on the landing page. The first live <strong>featured</strong> topic shows as the large banner.</p>
+  </div>
+  <button class="btn btn--primary btn--sm" type="button" (click)="newPromotion()"><app-icon name="plus" /> New topic</button>
+</header>
+
+@if (message(); as m) {
+  <p class="msg" [class.error]="m.kind === 'error'" role="status">{{ m.text }}</p>
+}
+
+<div class="workspace" [class.editing]="editingId() !== null">
+  <ul class="list">
+    @for (p of promotions(); track p.id) {
+      <li [class.selected]="editingId() === p.id">
+        <div class="thumb">
+          @if (p.imageUrl) {
+            <img [src]="p.imageUrl" alt="" />
+          }
+        </div>
+        <div class="info">
+          <div class="tags">
+            <span class="status" [attr.data-status]="status(p)">{{ status(p) }}</span>
+            @if (p.isFeatured) {
+              <span class="feat"><app-icon name="star" /> Featured</span>
+            }
+            <span>Order {{ p.sortOrder }}</span>
+          </div>
+          <strong>{{ p.title }}</strong>
+          @if (p.startsOn || p.endsOn) {
+            <small>{{ p.startsOn || '…' }} → {{ p.endsOn || '…' }}</small>
+          }
+        </div>
+        <div class="actions">
+          <button type="button" (click)="toggleActive(p)" [disabled]="busy()" [attr.aria-label]="p.isActive ? 'Hide' : 'Show'"
+            [title]="p.isActive ? 'Hide from site' : 'Show on site'">
+            <app-icon [name]="p.isActive ? 'eye' : 'lock'" />
+          </button>
+          <button type="button" (click)="edit(p)" aria-label="Edit" title="Edit"><app-icon name="edit" /></button>
+          <button type="button" class="danger" (click)="remove(p)" [disabled]="busy()" aria-label="Delete" title="Delete">
+            <app-icon name="trash" />
+          </button>
+        </div>
+      </li>
+    } @empty {
+      <li class="empty">No topics yet. Click <strong>New topic</strong> to add one.</li>
+    }
+  </ul>
+
+  @if (editingId() !== null) {
+    <div class="editor">
+      <form class="panel" [formGroup]="form" (ngSubmit)="save()">
+        <h2>{{ editingId() ? 'Edit topic' : 'New topic' }}</h2>
+
+        <div class="field">
+          <label for="title">Title *</label>
+          <input id="title" formControlName="title" />
+        </div>
+        <div class="field">
+          <label for="summary">Summary</label>
+          <textarea id="summary" formControlName="summary" rows="4"></textarea>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="badge">Badge (optional)</label>
+            <input id="badge" formControlName="badge" placeholder="Limited time" />
+          </div>
+          <div class="field">
+            <label for="sortOrder">Display order</label>
+            <input id="sortOrder" type="number" formControlName="sortOrder" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="imageUrl">Image</label>
+          <app-image-field inputId="imageUrl" [value]="form.controls.imageUrl.value" (valueChange)="setImage($event)" />
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="ctaText">Button text</label>
+            <input id="ctaText" formControlName="ctaText" placeholder="Get a quote" />
+          </div>
+          <div class="field">
+            <label for="ctaUrl">Button link</label>
+            <input id="ctaUrl" formControlName="ctaUrl" placeholder="/contact?service=Custom%20Decks" />
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="startsOn">Show from (optional)</label>
+            <input id="startsOn" type="date" formControlName="startsOn" />
+          </div>
+          <div class="field">
+            <label for="endsOn">Show until (optional)</label>
+            <input id="endsOn" type="date" formControlName="endsOn" />
+          </div>
+        </div>
+
+        <div class="checks">
+          <label><input type="checkbox" formControlName="isActive" /> Show on the site</label>
+          <label><input type="checkbox" formControlName="isFeatured" /> Featured banner</label>
+        </div>
+
+        <div class="editor-actions">
+          <button class="btn btn--primary" type="submit" [disabled]="busy()">Save</button>
+          <button class="btn btn--outline" type="button" (click)="cancel()">Cancel</button>
+        </div>
+      </form>
+
+      <div class="preview">
+        <span class="eyebrow">Preview</span>
+        <app-promo-card [promotion]="preview()" />
+      </div>
+    </div>
+  }
+</div>

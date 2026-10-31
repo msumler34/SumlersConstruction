@@ -1,0 +1,113 @@
+.footer {
+  background: #141a1c;
+  color: rgba(247, 242, 234, 0.72);
+  padding-top: 72px;
+  font-size: 0.95rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1.4fr;
+  gap: 40px;
+  padding-bottom: 56px;
+}
+
+app-logo {
+  color: var(--cream);
+  margin-bottom: 18px;
+}
+
+.about p {
+  max-width: 320px;
+}
+
+h4 {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 18px;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--amber);
+  }
+}
+
+.contact li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  app-icon {
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+    color: var(--amber);
+  }
+}
+
+.social {
+  display: flex;
+  gap: 10px;
+
+  a {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--cream);
+    transition:
+      background-color 0.2s,
+      transform 0.2s;
+
+    &:hover {
+      background: var(--amber);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+  }
+
+  app-icon {
+    width: 19px;
+    height: 19px;
+  }
+}
+
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

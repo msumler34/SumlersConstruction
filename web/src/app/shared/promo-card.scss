@@ -1,0 +1,89 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--paper);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.4s var(--ease),
+    box-shadow 0.4s var(--ease);
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow);
+
+    img {
+      transform: scale(1.06);
+    }
+
+    .cta app-icon {
+      transform: translateX(4px);
+    }
+  }
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--sand);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s var(--ease);
+  }
+
+  .badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+  }
+}
+
+.placeholder {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: var(--amber);
+
+  app-icon {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 26px 26px 28px;
+
+  p {
+    color: var(--ink-soft);
+    flex: 1;
+  }
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--amber-dark);
+  text-decoration: none;
+
+  app-icon {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s var(--ease);
+  }
+}

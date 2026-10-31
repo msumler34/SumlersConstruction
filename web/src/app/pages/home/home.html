@@ -1,0 +1,235 @@
+@let site = siteService.site();
+
+<!-- Hero -->
+<section class="hero">
+  @if (site.heroImageUrl) {
+    <img class="hero-bg" [src]="site.heroImageUrl" alt="" fetchpriority="high" />
+  }
+  <div class="hero-shade"></div>
+  <div class="container hero-content">
+    <span class="eyebrow light">Decks · Remodels · Everything residential</span>
+    <h1>Built right.<br /><em>Built to last.</em></h1>
+    <p class="lead">
+      {{ site.businessName }} designs and builds custom decks, remodels kitchens and baths, and takes
+      care of every kind of project around your home.
+    </p>
+    <div class="hero-actions">
+      <a routerLink="/contact" class="btn btn--primary">Get a free estimate <app-icon name="arrow" /></a>
+      @if (site.messengerUrl) {
+        <a [href]="site.messengerUrl" target="_blank" rel="noopener" class="btn btn--ghost">
+          <app-icon name="messenger" /> Message us
+        </a>
+      }
+    </div>
+    <ul class="trust">
+      @if (site.yearsInBusiness) {
+        <li><strong>{{ site.yearsInBusiness }}+</strong><span>Years building</span></li>
+      }
+      <li><strong>5.0</strong><span class="stars">★★★★★</span></li>
+      <li><strong>100%</strong><span>Licensed &amp; insured</span></li>
+      <li><strong>Free</strong><span>Written estimates</span></li>
+    </ul>
+  </div>
+  <a href="#promotions" class="scroll-cue" aria-label="Scroll down"><span></span></a>
+</section>
+
+<!-- Featured promotion -->
+@if (siteService.featuredPromotion(); as featured) {
+  <section class="featured container" id="promotions">
+    <article class="featured-card" appReveal>
+      <div class="featured-media">
+        @if (featured.imageUrl) {
+          <img [src]="featured.imageUrl" [alt]="featured.title" />
+        }
+      </div>
+      <div class="featured-body">
+        @if (featured.badge) {
+          <span class="badge">{{ featured.badge }}</span>
+        }
+        <h2>{{ featured.title }}</h2>
+        <p>{{ featured.summary }}</p>
+        @if (featured.ctaText && featured.ctaUrl) {
+          @if (featuredLink().internal) {
+            <a class="btn btn--primary" [routerLink]="featuredLink().path" [queryParams]="featuredLink().query">
+              {{ featured.ctaText }} <app-icon name="arrow" />
+            </a>
+          } @else {
+            <a class="btn btn--primary" [href]="featuredLink().path" target="_blank" rel="noopener">
+              {{ featured.ctaText }} <app-icon name="arrow" />
+            </a>
+          }
+        }
+      </div>
+    </article>
+  </section>
+}
+
+<!-- Other promotions -->
+@if (siteService.otherPromotions().length) {
+  <section class="section promos" [attr.id]="siteService.featuredPromotion() ? null : 'promotions'">
+    <div class="container">
+      <div class="section-head" appReveal>
+        <span class="eyebrow">What's new</span>
+        <h2>Specials &amp; featured projects</h2>
+        <p>Seasonal offers and the projects homeowners are asking us about right now.</p>
+      </div>
+      <div class="promo-grid">
+        @for (promo of siteService.otherPromotions(); track promo.id; let i = $index) {
+          <app-promo-card [promotion]="promo" [appReveal]="i * 90" />
+        }
+      </div>
+    </div>
+  </section>
+}
+
+<!-- Services -->
+<section class="section section--sand">
+  <div class="container">
+    <div class="section-head section-head--center" appReveal>
+      <span class="eyebrow">What we do</span>
+      <h2>Decks, remodels and everything in between</h2>
+      <p>We specialize in outdoor living and home remodeling, and we can help with anything else your home needs.</p>
+    </div>
+    <div class="service-grid">
+      @for (service of site.services; track service.key; let i = $index) {
+        <a class="service" [routerLink]="'/services'" [fragment]="service.key" [appReveal]="i * 90">
+          <img [src]="service.imageUrl" [alt]="service.title" loading="lazy" />
+          <div class="service-body">
+            <span class="service-icon"><app-icon [name]="service.icon" /></span>
+            <h3>{{ service.title }}</h3>
+            <p>{{ service.summary }}</p>
+            <span class="more">Learn more <app-icon name="arrow" /></span>
+          </div>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Why us -->
+<section class="section why">
+  <div class="container why-grid">
+    <div class="why-media" appReveal>
+      <img [src]="craftImage" alt="Our crew building a wooden deck" loading="lazy" />
+      @if (site.yearsInBusiness) {
+        <div class="why-stamp">
+          <strong>{{ site.yearsInBusiness }}+</strong>
+          <span>years of craftsmanship</span>
+        </div>
+      }
+    </div>
+    <div [appReveal]="120">
+      <span class="eyebrow">Why homeowners choose us</span>
+      <h2>Craftsmanship you can see. Service you can count on.</h2>
+      <p class="why-lead">
+        We are a family-run crew that treats every home like our own. That means showing up on time,
+        explaining your options honestly and building work we are proud to put our name on.
+      </p>
+      <div class="reasons">
+        @for (reason of reasons; track reason.title) {
+          <div class="reason">
+            <span class="reason-icon"><app-icon [name]="reason.icon" /></span>
+            <div>
+              <h4>{{ reason.title }}</h4>
+              <p>{{ reason.text }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Gallery -->
+<section class="section section--sand" id="work">
+  <div class="container">
+    <div class="section-head section-head--center" appReveal>
+      <span class="eyebrow">Our work</span>
+      <h2>Projects we're proud of</h2>
+      <p>A look at the decks, kitchens, baths and exteriors we build. Follow us on Facebook for the latest.</p>
+    </div>
+    <div class="gallery">
+      @for (item of site.gallery; track $index; let i = $index) {
+        <figure [appReveal]="(i % 4) * 70">
+          <img [src]="item.imageUrl" [alt]="item.alt || item.label" loading="lazy" />
+          @if (item.label) {
+            <figcaption>{{ item.label }}</figcaption>
+          }
+        </figure>
+      }
+    </div>
+    @if (site.facebookUrl) {
+      <div class="center">
+        <a [href]="site.facebookUrl" target="_blank" rel="noopener" class="btn btn--outline">
+          <app-icon name="facebook" /> See more on Facebook
+        </a>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Process -->
+<section class="section section--dark process" id="process">
+  <div class="container">
+    <div class="section-head section-head--center" appReveal>
+      <span class="eyebrow">How we work</span>
+      <h2>A simple, stress-free process</h2>
+      <p>From the first call to the final walkthrough, you always know what happens next.</p>
+    </div>
+    <ol class="steps">
+      @for (step of steps; track step.title; let i = $index) {
+        <li [appReveal]="i * 110">
+          <span class="step-num">{{ i + 1 }}</span>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.text }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<!-- Reviews -->
+<section class="section" id="reviews">
+  @if (site.testimonials.length) {
+    <div class="container">
+      <div class="section-head section-head--center" appReveal>
+        <span class="eyebrow">Reviews</span>
+        <h2>What our customers say</h2>
+      </div>
+      <div class="reviews">
+        @for (review of site.testimonials; track review.author; let i = $index) {
+          <figure class="review" [appReveal]="i * 100">
+            <app-icon name="quote" class="quote-mark" />
+            <div class="stars">★★★★★</div>
+            <blockquote>{{ review.quote }}</blockquote>
+            <figcaption>
+              <strong>{{ review.author }}</strong>
+              <span>{{ review.project }}</span>
+            </figcaption>
+          </figure>
+        }
+      </div>
+    </div>
+  }
+</section>
+
+<!-- Call to action -->
+<section class="cta-band">
+  <div class="container cta-inner" appReveal>
+    <div>
+      <h2>Ready to start your project?</h2>
+      <p>Tell us what you have in mind. Estimates are always free, and we usually answer within a day.</p>
+    </div>
+    <div class="cta-actions">
+      <a routerLink="/contact" class="btn btn--dark">Request an estimate <app-icon name="arrow" /></a>
+      @if (site.phone) {
+        <a [href]="siteService.phoneHref()" class="btn btn--ghost"><app-icon name="phone" /> {{ site.phone }}</a>
+      }
+      @if (site.messengerUrl) {
+        <a [href]="site.messengerUrl" target="_blank" rel="noopener" class="btn btn--ghost">
+          <app-icon name="messenger" /> Messenger
+        </a>
+      }
+    </div>
+  </div>
+</section>

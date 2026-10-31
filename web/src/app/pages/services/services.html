@@ -1,0 +1,51 @@
+@let site = siteService.site();
+
+<app-page-hero
+  eyebrow="Our services"
+  title="Everything your home needs, built by one trusted crew"
+  subtitle="Decks and remodeling are our specialty, but if it is part of your home, we can help."
+  [image]="heroImage"
+/>
+
+<section class="section">
+  <div class="container list">
+    @for (service of site.services; track service.key; let odd = $odd) {
+      <article class="service" [class.flip]="odd" [id]="service.key" appReveal>
+        <div class="media">
+          <img [src]="service.imageUrl" [alt]="service.title" loading="lazy" />
+        </div>
+        <div class="body">
+          <span class="icon"><app-icon [name]="service.icon" /></span>
+          <h2>{{ service.title }}</h2>
+          <p>{{ service.summary }}</p>
+          <ul>
+            @for (item of service.highlights; track item) {
+              <li><app-icon name="check" /> {{ item }}</li>
+            }
+          </ul>
+          <a class="btn btn--primary" routerLink="/contact" [queryParams]="{ service: service.title }">
+            Get a {{ service.title.toLowerCase() }} quote <app-icon name="arrow" />
+          </a>
+        </div>
+      </article>
+    }
+  </div>
+</section>
+
+<section class="section section--dark">
+  <div class="container">
+    <div class="section-head section-head--center" appReveal>
+      <span class="eyebrow">And much more</span>
+      <h2>Don't see your project? Just ask.</h2>
+      <p>We handle residential work of every size. Here are a few more things we do often.</p>
+    </div>
+    <ul class="chips" appReveal>
+      @for (item of alsoHelp; track item) {
+        <li><app-icon name="check" /> {{ item }}</li>
+      }
+    </ul>
+    <div class="center">
+      <a routerLink="/contact" class="btn btn--primary">Tell us about your project <app-icon name="arrow" /></a>
+    </div>
+  </div>
+</section>

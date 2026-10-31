@@ -1,0 +1,28 @@
+@let promo = promotion();
+<article class="card">
+  <div class="media">
+    @if (promo.imageUrl) {
+      <img [src]="promo.imageUrl" [alt]="promo.title" loading="lazy" />
+    } @else {
+      <div class="placeholder"><app-icon name="hammer" /></div>
+    }
+    @if (promo.badge) {
+      <span class="badge">{{ promo.badge }}</span>
+    }
+  </div>
+  <div class="body">
+    <h3>{{ promo.title }}</h3>
+    <p>{{ promo.summary }}</p>
+    @if (promo.ctaText && promo.ctaUrl) {
+      @if (link().internal) {
+        <a class="cta" [routerLink]="link().path" [queryParams]="link().query">
+          {{ promo.ctaText }} <app-icon name="arrow" />
+        </a>
+      } @else {
+        <a class="cta" [href]="link().path" target="_blank" rel="noopener">
+          {{ promo.ctaText }} <app-icon name="arrow" />
+        </a>
+      }
+    }
+  </div>
+</article>

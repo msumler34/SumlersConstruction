@@ -1,0 +1,36 @@
+<header class="header" [class.solid]="solid()" [class.open]="menuOpen()">
+  <div class="container bar">
+    <a routerLink="/" class="brand" (click)="closeMenu()" aria-label="Sumlers Construction home">
+      <app-logo />
+    </a>
+
+    <nav class="nav" id="main-nav" aria-label="Main">
+      <a routerLink="/services" routerLinkActive="active" (click)="closeMenu()">Services</a>
+      <a routerLink="/" fragment="work" (click)="closeMenu()">Our Work</a>
+      <a routerLink="/" fragment="process" (click)="closeMenu()">How We Work</a>
+      <a routerLink="/" fragment="reviews" (click)="closeMenu()">Reviews</a>
+      <a routerLink="/contact" routerLinkActive="active" (click)="closeMenu()">Contact</a>
+
+      <div class="nav-actions">
+        @if (siteService.site().phone) {
+          <a class="phone" [href]="siteService.phoneHref()">
+            <app-icon name="phone" />
+            {{ siteService.site().phone }}
+          </a>
+        }
+        <a routerLink="/contact" class="btn btn--primary btn--sm" (click)="closeMenu()">Free Estimate</a>
+      </div>
+    </nav>
+
+    <button
+      type="button"
+      class="menu-toggle"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="main-nav"
+    >
+      <span class="sr-only">{{ menuOpen() ? 'Close menu' : 'Open menu' }}</span>
+      <app-icon [name]="menuOpen() ? 'close' : 'menu'" />
+    </button>
+  </div>
+</header>

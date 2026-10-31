@@ -1,0 +1,226 @@
+<header class="top">
+  <div>
+    <h1>Business info</h1>
+    <p>Contact details, social links, photos, services and reviews shown across the whole site.</p>
+  </div>
+</header>
+
+@if (message(); as m) {
+  <p class="msg" [class.error]="m.kind === 'error'" role="status">{{ m.text }}</p>
+}
+
+@let d = draft();
+@if (d) {
+  <div class="sections" (input)="changed()" (change)="changed()">
+    <!-- Contact details -->
+    <section class="panel">
+      <h2><app-icon name="phone" /> Contact details</h2>
+      <div class="grid2">
+        <div class="field">
+          <label for="businessName">Business name *</label>
+          <input id="businessName" [(ngModel)]="d.businessName" />
+        </div>
+        <div class="field">
+          <label for="years">Years in business</label>
+          <input id="years" type="number" min="0" [(ngModel)]="d.yearsInBusiness" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="tagline">Tagline</label>
+        <input id="tagline" [(ngModel)]="d.tagline" />
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input id="phone" type="tel" [(ngModel)]="d.phone" placeholder="(555) 555-0123" />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" [(ngModel)]="d.email" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="address">Address (optional, shown in the footer and on the contact page)</label>
+        <input id="address" [(ngModel)]="d.address" placeholder="123 Main St, Springfield" />
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="serviceArea">Service area</label>
+          <input id="serviceArea" [(ngModel)]="d.serviceArea" placeholder="Serving the tri-county area" />
+        </div>
+        <div class="field">
+          <label for="hours">Hours</label>
+          <input id="hours" [(ngModel)]="d.hours" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Social -->
+    <section class="panel">
+      <h2><app-icon name="facebook" /> Facebook &amp; Messenger</h2>
+      <div class="field">
+        <label for="facebookUrl">Facebook page link</label>
+        <input id="facebookUrl" [(ngModel)]="d.facebookUrl" placeholder="https://www.facebook.com/yourpage" />
+      </div>
+      <div class="field">
+        <label for="messengerUrl">Messenger link</label>
+        <input id="messengerUrl" [(ngModel)]="d.messengerUrl" placeholder="https://m.me/yourpage" />
+        <small class="hint">Use https://m.me/ followed by the Facebook page's username. Leave it empty to hide the Messenger buttons.</small>
+      </div>
+    </section>
+
+    <!-- Hero photo -->
+    <section class="panel">
+      <h2><app-icon name="eye" /> Landing page photo</h2>
+      <p class="hint">The large photo at the top of the home page. Wide, bright photos of a finished deck or outdoor space work best.</p>
+      <app-image-field inputId="heroImage" [(value)]="d.heroImageUrl" (valueChange)="changed()" />
+      @if (d.heroImageUrl) {
+        <img class="hero-preview" [src]="d.heroImageUrl" alt="Landing page photo preview" />
+      }
+    </section>
+
+    <!-- Services -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2><app-icon name="hammer" /> Services</h2>
+        <button type="button" class="btn btn--outline btn--sm"
+          (click)="add(d.services, { key: '', title: '', summary: '', icon: 'hammer', imageUrl: '', highlights: [] })">
+          <app-icon name="plus" /> Add service
+        </button>
+      </div>
+      @for (s of d.services; track $index; let i = $index, first = $first, last = $last) {
+        <div class="item">
+          <div class="item-head">
+            <strong>{{ s.title || 'New service' }}</strong>
+            <div class="item-actions">
+              <button type="button" class="icon-btn" (click)="move(d.services, i, -1)" [disabled]="first" title="Move up" aria-label="Move up">▲</button>
+              <button type="button" class="icon-btn" (click)="move(d.services, i, 1)" [disabled]="last" title="Move down" aria-label="Move down">▼</button>
+              <button type="button" class="icon-btn danger" (click)="remove(d.services, i)" title="Remove" aria-label="Remove service">
+                <app-icon name="trash" />
+              </button>
+            </div>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label [for]="'svc-title-' + i">Title *</label>
+              <input [id]="'svc-title-' + i" [(ngModel)]="s.title" />
+            </div>
+            <div class="field">
+              <label [for]="'svc-icon-' + i">Icon</label>
+              <div class="icon-pick">
+                <span class="icon-preview"><app-icon [name]="s.icon" /></span>
+                <select [id]="'svc-icon-' + i" [(ngModel)]="s.icon">
+                  @for (icon of serviceIcons; track icon) {
+                    <option [value]="icon">{{ icon }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label [for]="'svc-summary-' + i">Description</label>
+            <textarea [id]="'svc-summary-' + i" rows="3" [(ngModel)]="s.summary"></textarea>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label [for]="'svc-image-' + i">Photo</label>
+              <app-image-field [inputId]="'svc-image-' + i" [(value)]="s.imageUrl" (valueChange)="changed()" />
+            </div>
+            <div class="field">
+              <label [for]="'svc-hl-' + i">Highlights (one per line)</label>
+              <textarea [id]="'svc-hl-' + i" rows="3" [ngModel]="highlightsText(s.highlights)"
+                (ngModelChange)="setHighlights(s, $event)"></textarea>
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <p class="hint">No services yet.</p>
+      }
+    </section>
+
+    <!-- Gallery -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2><app-icon name="eye" /> Our Work gallery</h2>
+        <button type="button" class="btn btn--outline btn--sm" (click)="add(d.gallery, { imageUrl: '', label: '', alt: '' })">
+          <app-icon name="plus" /> Add photo
+        </button>
+      </div>
+      <div class="gallery-grid">
+        @for (g of d.gallery; track $index; let i = $index, first = $first, last = $last) {
+          <div class="item">
+            <div class="item-head">
+              <strong>Photo {{ i + 1 }}</strong>
+              <div class="item-actions">
+                <button type="button" class="icon-btn" (click)="move(d.gallery, i, -1)" [disabled]="first" title="Move earlier" aria-label="Move earlier">▲</button>
+                <button type="button" class="icon-btn" (click)="move(d.gallery, i, 1)" [disabled]="last" title="Move later" aria-label="Move later">▼</button>
+                <button type="button" class="icon-btn danger" (click)="remove(d.gallery, i)" title="Remove" aria-label="Remove photo">
+                  <app-icon name="trash" />
+                </button>
+              </div>
+            </div>
+            <app-image-field [inputId]="'gal-image-' + i" [(value)]="g.imageUrl" (valueChange)="changed()" />
+            <div class="grid2">
+              <div class="field">
+                <label [for]="'gal-label-' + i">Label</label>
+                <input [id]="'gal-label-' + i" [(ngModel)]="g.label" placeholder="Decks" />
+              </div>
+              <div class="field">
+                <label [for]="'gal-alt-' + i">Description</label>
+                <input [id]="'gal-alt-' + i" [(ngModel)]="g.alt" placeholder="Two-level cedar deck" />
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <p class="hint">No photos yet. The gallery section stays empty until you add some.</p>
+        }
+      </div>
+    </section>
+
+    <!-- Reviews -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2><app-icon name="quote" /> Customer reviews</h2>
+        <button type="button" class="btn btn--outline btn--sm" (click)="add(d.testimonials, { quote: '', author: '', project: '' })">
+          <app-icon name="plus" /> Add review
+        </button>
+      </div>
+      @for (t of d.testimonials; track $index; let i = $index) {
+        <div class="item">
+          <div class="item-head">
+            <strong>{{ t.author || 'New review' }}</strong>
+            <button type="button" class="icon-btn danger" (click)="remove(d.testimonials, i)" title="Remove" aria-label="Remove review">
+              <app-icon name="trash" />
+            </button>
+          </div>
+          <div class="field">
+            <label [for]="'rev-quote-' + i">Review *</label>
+            <textarea [id]="'rev-quote-' + i" rows="3" [(ngModel)]="t.quote"></textarea>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label [for]="'rev-author-' + i">Customer name</label>
+              <input [id]="'rev-author-' + i" [(ngModel)]="t.author" placeholder="Jennifer R." />
+            </div>
+            <div class="field">
+              <label [for]="'rev-project-' + i">Project</label>
+              <input [id]="'rev-project-' + i" [(ngModel)]="t.project" placeholder="Composite deck" />
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <p class="hint">No reviews yet.</p>
+      }
+    </section>
+  </div>
+
+  <div class="savebar" [class.show]="dirty()">
+    <span>You have unsaved changes.</span>
+    <div>
+      <button type="button" class="btn btn--outline btn--sm" (click)="discard()" [disabled]="busy()">Discard</button>
+      <button type="button" class="btn btn--primary btn--sm" (click)="save()" [disabled]="busy()">
+        {{ busy() ? 'Saving…' : 'Save changes' }}
+      </button>
+    </div>
+  </div>
+}

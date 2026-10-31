@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Sumlers.Api/Sumlers.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Sumlers.Api.Tests/Sumlers.Api.Tests.csproj" />
+  </Folder>
+</Solution>

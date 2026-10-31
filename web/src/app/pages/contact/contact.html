@@ -1,0 +1,144 @@
+@let site = siteService.site();
+
+<app-page-hero
+  eyebrow="Free estimates"
+  title="Let's talk about your project"
+  subtitle="Send us a few details and we will get back to you, usually within one business day."
+  [image]="heroImage"
+/>
+
+<section class="section">
+  <div class="container layout">
+    <div class="form-card" #formCard>
+      @if (state() === 'sent') {
+        <div class="sent">
+          <span class="sent-icon"><app-icon name="check" /></span>
+          <h2>Thanks! We got your message.</h2>
+          <p>We will reach out soon. A confirmation email is on its way to your inbox.</p>
+          <button type="button" class="btn btn--outline" (click)="startOver()">Send another message</button>
+        </div>
+      } @else {
+        <h2>Request a free estimate</h2>
+        <p class="hint">Fields marked * are required.</p>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <div class="row">
+            <div class="field">
+              <label for="name">Name *</label>
+              <input id="name" formControlName="name" autocomplete="name" />
+              @if (showError('name')) {
+                <span class="error">Please enter your name.</span>
+              }
+            </div>
+            <div class="field">
+              <label for="email">Email *</label>
+              <input id="email" type="email" formControlName="email" autocomplete="email" />
+              @if (showError('email')) {
+                <span class="error">Please enter a valid email address.</span>
+              }
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input id="phone" type="tel" formControlName="phone" autocomplete="tel" />
+            </div>
+            <div class="field">
+              <label for="service">What can we help with?</label>
+              <select id="service" formControlName="service">
+                <option value="">Choose a service</option>
+                @for (s of site.services; track s.key) {
+                  <option [value]="s.title">{{ s.title }}</option>
+                }
+                <option value="Something else">Something else</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="address">Project address or town</label>
+            <input id="address" formControlName="address" autocomplete="street-address" />
+          </div>
+
+          <div class="field">
+            <label for="message">Tell us about your project *</label>
+            <textarea id="message" formControlName="message" rows="6"
+              placeholder="Size, materials, timeline, budget... anything that helps us understand what you have in mind."></textarea>
+            @if (showError('message')) {
+              <span class="error">Please tell us a little about your project.</span>
+            }
+          </div>
+
+          <!-- Honeypot: hidden from people, filled in by spam bots. -->
+          <div class="hp" aria-hidden="true">
+            <label for="website">Website</label>
+            <input id="website" formControlName="website" tabindex="-1" autocomplete="off" />
+          </div>
+
+          @if (state() === 'error') {
+            <p class="alert" role="alert">{{ errorMessage() }}</p>
+          }
+
+          <button type="submit" class="btn btn--primary submit" [disabled]="state() === 'sending'">
+            {{ state() === 'sending' ? 'Sending…' : 'Send my request' }}
+            <app-icon name="arrow" />
+          </button>
+        </form>
+      }
+    </div>
+
+    <aside class="side">
+      <div class="side-card">
+        <h3>Prefer to reach out directly?</h3>
+        <ul class="channels">
+          @if (site.phone) {
+            <li>
+              <a [href]="siteService.phoneHref()">
+                <span class="ch-icon"><app-icon name="phone" /></span>
+                <span><small>Call or text</small>{{ site.phone }}</span>
+              </a>
+            </li>
+          }
+          @if (site.email) {
+            <li>
+              <a [href]="siteService.emailHref()">
+                <span class="ch-icon"><app-icon name="mail" /></span>
+                <span><small>Email</small>{{ site.email }}</span>
+              </a>
+            </li>
+          }
+          @if (site.messengerUrl) {
+            <li>
+              <a [href]="site.messengerUrl" target="_blank" rel="noopener">
+                <span class="ch-icon messenger"><app-icon name="messenger" /></span>
+                <span><small>Facebook Messenger</small>Chat with us</span>
+              </a>
+            </li>
+          }
+          @if (site.facebookUrl) {
+            <li>
+              <a [href]="site.facebookUrl" target="_blank" rel="noopener">
+                <span class="ch-icon facebook"><app-icon name="facebook" /></span>
+                <span><small>Facebook</small>See our latest projects</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="side-card dark">
+        @if (site.hours) {
+          <p><app-icon name="clock" /> {{ site.hours }}</p>
+        }
+        @if (site.address) {
+          <p><app-icon name="home" /> {{ site.address }}</p>
+        }
+        @if (site.serviceArea) {
+          <p><app-icon name="pin" /> {{ site.serviceArea }}</p>
+        }
+        <p><app-icon name="shield" /> Licensed &amp; insured</p>
+      </div>
+    </aside>
+  </div>
+</section>

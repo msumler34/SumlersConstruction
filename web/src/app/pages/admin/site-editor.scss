@@ -1,0 +1,140 @@
+.sections {
+  display: grid;
+  gap: 24px;
+  padding-bottom: 80px;
+}
+
+.panel h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  app-icon {
+    width: 22px;
+    height: 22px;
+    color: var(--amber);
+  }
+}
+
+.panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.hero-preview {
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.item {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--cream);
+}
+
+.item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.item-actions {
+  display: flex;
+  gap: 2px;
+  font-size: 0.75rem;
+}
+
+.icon-pick {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  select {
+    flex: 1;
+  }
+}
+
+.icon-preview {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--amber);
+  color: #fff;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 14px;
+}
+
+/* Grid children default to their content width; this lets inputs shrink to fit the column. */
+.item,
+.item .field,
+.grid2 > * {
+  min-width: 0;
+}
+
+.savebar {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  z-index: 45;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: min(640px, calc(100% - 32px));
+  padding: 12px 14px 12px 22px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--cream);
+  box-shadow: var(--shadow-lg);
+  transform: translate(-50%, 140%);
+  transition: transform 0.35s var(--ease);
+
+  &.show {
+    transform: translate(-50%, 0);
+  }
+
+  div {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn--outline {
+    border-color: rgba(255, 255, 255, 0.4);
+    color: var(--cream);
+  }
+}
+
+@media (max-width: 700px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .savebar {
+    border-radius: var(--radius);
+    justify-content: center;
+    text-align: center;
+  }
+}

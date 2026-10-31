@@ -1,0 +1,58 @@
+[
+  {
+    "id": "fall-deck-special",
+    "title": "Book your spring deck now",
+    "summary": "Sign before the end of the year and save 10% on any new deck. We design over the winter so your crew starts the moment the weather breaks.",
+    "badge": "Limited time",
+    "imageUrl": "https://images.unsplash.com/photo-1783334418846-fe2a0420229b?auto=format&fit=crop&w=1600&q=80",
+    "ctaText": "Claim your spot",
+    "ctaUrl": "/contact?service=Custom%20Decks",
+    "isFeatured": true,
+    "isActive": true,
+    "sortOrder": 0,
+    "startsOn": null,
+    "endsOn": null
+  },
+  {
+    "id": "kitchen-refresh",
+    "title": "Kitchen refresh packages",
+    "summary": "New cabinets, counters, backsplash and lighting without a full gut. Most refreshes finish in under three weeks.",
+    "badge": "Popular",
+    "imageUrl": "https://images.unsplash.com/photo-1609347744403-2306e8a9ae27?auto=format&fit=crop&w=1200&q=80",
+    "ctaText": "Get a kitchen quote",
+    "ctaUrl": "/contact?service=Home%20Remodeling",
+    "isFeatured": false,
+    "isActive": true,
+    "sortOrder": 1,
+    "startsOn": null,
+    "endsOn": null
+  },
+  {
+    "id": "bathroom-updates",
+    "title": "Walk-in showers & bath updates",
+    "summary": "Swap the old tub for a tiled walk-in shower, add a new vanity or make the whole room safer and easier to clean.",
+    "badge": null,
+    "imageUrl": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80",
+    "ctaText": "Plan my bathroom",
+    "ctaUrl": "/contact?service=Home%20Remodeling",
+    "isFeatured": false,
+    "isActive": true,
+    "sortOrder": 2,
+    "startsOn": null,
+    "endsOn": null
+  },
+  {
+    "id": "deck-inspection",
+    "title": "Free deck safety check",
+    "summary": "Loose boards, wobbly railings or soft spots? We will inspect your deck for rot and failing fasteners and tell you honestly whether it needs repair or replacement.",
+    "badge": "Free",
+    "imageUrl": "https://images.unsplash.com/photo-1792630862829-90f519d52d88?auto=format&fit=crop&w=1200&q=80",
+    "ctaText": "Schedule a check",
+    "ctaUrl": "/contact?service=Repairs%20%26%20Everything%20Else",
+    "isFeatured": false,
+    "isActive": true,
+    "sortOrder": 3,
+    "startsOn": null,
+    "endsOn": null
+  }
+]

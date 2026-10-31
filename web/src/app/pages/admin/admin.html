@@ -1,0 +1,42 @@
+<section class="admin">
+  <div class="container">
+    @if (!admin.key()) {
+      <div class="signin">
+        <span class="lock"><app-icon name="lock" /></span>
+        <h1>Site admin</h1>
+        <p>Enter the admin key to manage the landing page and business details.</p>
+        <form (ngSubmit)="signIn()">
+          <div class="field">
+            <label for="key">Admin key</label>
+            <input id="key" name="key" type="password" autocomplete="current-password"
+              [ngModel]="keyInput()" (ngModelChange)="keyInput.set($event)" />
+          </div>
+          <button class="btn btn--primary" type="submit" [disabled]="busy()">Sign in</button>
+        </form>
+        @if (error()) {
+          <p class="msg error">{{ error() }}</p>
+        }
+      </div>
+    } @else {
+      <div class="tabbar">
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" [class.active]="tab() === 'promotions'" [attr.aria-selected]="tab() === 'promotions'"
+            (click)="tab.set('promotions')">
+            <app-icon name="star" /> Promoted topics
+          </button>
+          <button type="button" role="tab" [class.active]="tab() === 'site'" [attr.aria-selected]="tab() === 'site'"
+            (click)="tab.set('site')">
+            <app-icon name="home" /> Business info
+          </button>
+        </div>
+        <button class="btn btn--outline btn--sm" type="button" (click)="admin.signOut()">Sign out</button>
+      </div>
+
+      @if (tab() === 'promotions') {
+        <app-promotions-editor />
+      } @else {
+        <app-site-editor />
+      }
+    }
+  </div>
+</section>

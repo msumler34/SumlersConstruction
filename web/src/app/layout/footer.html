@@ -1,0 +1,69 @@
+@let site = siteService.site();
+<footer class="footer">
+  <div class="container grid">
+    <div class="about">
+      <app-logo />
+      <p>{{ site.tagline }}</p>
+      <div class="social">
+        @if (site.facebookUrl) {
+          <a [href]="site.facebookUrl" target="_blank" rel="noopener" aria-label="Sumlers Construction on Facebook">
+            <app-icon name="facebook" />
+          </a>
+        }
+        @if (site.messengerUrl) {
+          <a [href]="site.messengerUrl" target="_blank" rel="noopener" aria-label="Message us on Messenger">
+            <app-icon name="messenger" />
+          </a>
+        }
+        @if (site.email) {
+          <a [href]="siteService.emailHref()" aria-label="Email us"><app-icon name="mail" /></a>
+        }
+      </div>
+    </div>
+
+    <div>
+      <h4>Services</h4>
+      <ul>
+        @for (service of site.services; track service.key) {
+          <li><a routerLink="/services" [fragment]="service.key">{{ service.title }}</a></li>
+        }
+      </ul>
+    </div>
+
+    <div>
+      <h4>Company</h4>
+      <ul>
+        <li><a routerLink="/" fragment="work">Our Work</a></li>
+        <li><a routerLink="/" fragment="process">How We Work</a></li>
+        <li><a routerLink="/" fragment="reviews">Reviews</a></li>
+        <li><a routerLink="/contact">Free Estimate</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Get in touch</h4>
+      <ul class="contact">
+        @if (site.phone) {
+          <li><app-icon name="phone" /><a [href]="siteService.phoneHref()">{{ site.phone }}</a></li>
+        }
+        @if (site.email) {
+          <li><app-icon name="mail" /><a [href]="siteService.emailHref()">{{ site.email }}</a></li>
+        }
+        @if (site.address) {
+          <li><app-icon name="home" /><span>{{ site.address }}</span></li>
+        }
+        @if (site.serviceArea) {
+          <li><app-icon name="pin" /><span>{{ site.serviceArea }}</span></li>
+        }
+        @if (site.hours) {
+          <li><app-icon name="clock" /><span>{{ site.hours }}</span></li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="container legal">
+    <span>© {{ year }} {{ site.businessName }}. All rights reserved.</span>
+    <span>Licensed &amp; insured · Free estimates</span>
+  </div>
+</footer>
