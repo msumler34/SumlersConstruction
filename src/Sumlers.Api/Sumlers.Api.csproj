@@ -6,8 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <!-- Running the API in Development also starts "ng serve" and opens the browser on the Angular app. -->
+  <PropertyGroup>
+    <SpaRoot>..\..\web\</SpaRoot>
+    <SpaProxyServerUrl>http://localhost:4200</SpaProxyServerUrl>
+    <SpaProxyLaunchCommand>pnpm start</SpaProxyLaunchCommand>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="MailKit" Version="4.18.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="10.0.14" />
   </ItemGroup>
 
   <!-- App_Data holds live promotions, uploads and the dev outbox. A publish must never overwrite it. -->
@@ -15,5 +23,22 @@
     <Content Remove="App_Data/**" />
     <None Remove="App_Data/**" />
   </ItemGroup>
+
+  <!--
+    "web" is a directory link to the Angular app in /web, so Solution Explorer shows one folder to
+    right-click (Open in VS Code, Open in Terminal). Its files are excluded from this project.
+  -->
+  <PropertyGroup>
+    <DefaultItemExcludes>$(DefaultItemExcludes);web\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="web\" />
+  </ItemGroup>
+
+  <Target Name="LinkWebFolder" BeforeTargets="BeforeBuild" Condition="!Exists('web')">
+    <Exec Condition="'$(OS)' == 'Windows_NT'" Command="mklink /J web &quot;$([System.IO.Path]::GetFullPath('$(SpaRoot)').TrimEnd('\'))&quot;" />
+    <Exec Condition="'$(OS)' != 'Windows_NT'" Command="ln -s ../../web web" />
+  </Target>
 
 </Project>

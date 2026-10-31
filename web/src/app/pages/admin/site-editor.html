@@ -69,22 +69,43 @@
       </div>
     </section>
 
-    <!-- Hero photo -->
+    <!-- Hero -->
     <section class="panel">
-      <h2><app-icon name="eye" /> Landing page photo</h2>
-      <p class="hint">The large photo at the top of the home page. Wide, bright photos of a finished deck or outdoor space work best.</p>
-      <app-image-field inputId="heroImage" [(value)]="d.heroImageUrl" (valueChange)="changed()" />
+      <h2><app-icon name="eye" /> Home page headline &amp; photo</h2>
+      <p class="hint">The first thing visitors see. Wide, bright photos of a finished deck or outdoor space work best.</p>
+      <div class="field">
+        <label for="heroEyebrow">Small line above the headline</label>
+        <input id="heroEyebrow" [(ngModel)]="d.hero.eyebrow" placeholder="Decks · Remodels · Everything residential" />
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="heroTitle">Headline</label>
+          <input id="heroTitle" [(ngModel)]="d.hero.title" placeholder="Built right." />
+        </div>
+        <div class="field">
+          <label for="heroHighlight">Second line (shown in gold italics)</label>
+          <input id="heroHighlight" [(ngModel)]="d.hero.highlight" placeholder="Built to last." />
+        </div>
+      </div>
+      <div class="field">
+        <label for="heroText">Text under the headline</label>
+        <textarea id="heroText" rows="3" [(ngModel)]="d.hero.text"></textarea>
+      </div>
+      <div class="field">
+        <label for="heroImage">Photo</label>
+        <app-image-field inputId="heroImage" [(value)]="d.heroImageUrl" (valueChange)="changed()" />
+      </div>
       @if (d.heroImageUrl) {
         <img class="hero-preview" [src]="d.heroImageUrl" alt="Landing page photo preview" />
       }
     </section>
 
     <!-- Services -->
-    <section class="panel">
+    <section class="panel" data-list="services">
       <div class="panel-head">
         <h2><app-icon name="hammer" /> Services</h2>
         <button type="button" class="btn btn--outline btn--sm"
-          (click)="add(d.services, { key: '', title: '', summary: '', icon: 'hammer', imageUrl: '', highlights: [] })">
+          (click)="add(d.services, { key: '', title: '', summary: '', icon: 'hammer', imageUrl: '', highlights: [] }, 'services')">
           <app-icon name="plus" /> Add service
         </button>
       </div>
@@ -139,10 +160,10 @@
     </section>
 
     <!-- Gallery -->
-    <section class="panel">
+    <section class="panel" data-list="gallery">
       <div class="panel-head">
         <h2><app-icon name="eye" /> Our Work gallery</h2>
-        <button type="button" class="btn btn--outline btn--sm" (click)="add(d.gallery, { imageUrl: '', label: '', alt: '' })">
+        <button type="button" class="btn btn--outline btn--sm" (click)="add(d.gallery, { imageUrl: '', label: '', alt: '' }, 'gallery')">
           <app-icon name="plus" /> Add photo
         </button>
       </div>
@@ -178,10 +199,10 @@
     </section>
 
     <!-- Reviews -->
-    <section class="panel">
+    <section class="panel" data-list="reviews">
       <div class="panel-head">
         <h2><app-icon name="quote" /> Customer reviews</h2>
-        <button type="button" class="btn btn--outline btn--sm" (click)="add(d.testimonials, { quote: '', author: '', project: '' })">
+        <button type="button" class="btn btn--outline btn--sm" (click)="add(d.testimonials, { quote: '', author: '', project: '' }, 'reviews')">
           <app-icon name="plus" /> Add review
         </button>
       </div>
@@ -211,6 +232,119 @@
       } @empty {
         <p class="hint">No reviews yet.</p>
       }
+    </section>
+
+    <!-- Why choose us -->
+    <section class="panel" data-list="why">
+      <div class="panel-head">
+        <h2><app-icon name="shield" /> "Why choose us" section</h2>
+        <button type="button" class="btn btn--outline btn--sm" (click)="add(d.whyUs.items, { icon: 'check', title: '', text: '' }, 'why')">
+          <app-icon name="plus" /> Add point
+        </button>
+      </div>
+      <div class="field">
+        <label for="whyTitle">Heading</label>
+        <input id="whyTitle" [(ngModel)]="d.whyUs.title" />
+      </div>
+      <div class="field">
+        <label for="whyText">Text</label>
+        <textarea id="whyText" rows="3" [(ngModel)]="d.whyUs.text"></textarea>
+      </div>
+      <div class="field">
+        <label for="whyImage">Photo</label>
+        <app-image-field inputId="whyImage" [(value)]="d.whyUs.imageUrl" (valueChange)="changed()" />
+      </div>
+      @for (item of d.whyUs.items; track $index; let i = $index, first = $first, last = $last) {
+        <div class="item">
+          <div class="item-head">
+            <strong>{{ item.title || 'New point' }}</strong>
+            <div class="item-actions">
+              <button type="button" class="icon-btn" (click)="move(d.whyUs.items, i, -1)" [disabled]="first" title="Move up" aria-label="Move up">▲</button>
+              <button type="button" class="icon-btn" (click)="move(d.whyUs.items, i, 1)" [disabled]="last" title="Move down" aria-label="Move down">▼</button>
+              <button type="button" class="icon-btn danger" (click)="remove(d.whyUs.items, i)" title="Remove" aria-label="Remove point">
+                <app-icon name="trash" />
+              </button>
+            </div>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label [for]="'why-title-' + i">Title *</label>
+              <input [id]="'why-title-' + i" [(ngModel)]="item.title" />
+            </div>
+            <div class="field">
+              <label [for]="'why-icon-' + i">Icon</label>
+              <div class="icon-pick">
+                <span class="icon-preview"><app-icon [name]="item.icon" /></span>
+                <select [id]="'why-icon-' + i" [(ngModel)]="item.icon">
+                  @for (icon of pointIcons; track icon) {
+                    <option [value]="icon">{{ icon }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label [for]="'why-text-' + i">Text</label>
+            <input [id]="'why-text-' + i" [(ngModel)]="item.text" />
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- How we work -->
+    <section class="panel" data-list="process">
+      <div class="panel-head">
+        <h2><app-icon name="ruler" /> "How we work" steps</h2>
+        <button type="button" class="btn btn--outline btn--sm" (click)="add(d.process.items, { icon: '', title: '', text: '' }, 'process')">
+          <app-icon name="plus" /> Add step
+        </button>
+      </div>
+      <div class="field">
+        <label for="processTitle">Heading</label>
+        <input id="processTitle" [(ngModel)]="d.process.title" />
+      </div>
+      <div class="field">
+        <label for="processText">Text</label>
+        <input id="processText" [(ngModel)]="d.process.text" />
+      </div>
+      @for (step of d.process.items; track $index; let i = $index, first = $first, last = $last) {
+        <div class="item">
+          <div class="item-head">
+            <strong>Step {{ i + 1 }}: {{ step.title || 'New step' }}</strong>
+            <div class="item-actions">
+              <button type="button" class="icon-btn" (click)="move(d.process.items, i, -1)" [disabled]="first" title="Move up" aria-label="Move up">▲</button>
+              <button type="button" class="icon-btn" (click)="move(d.process.items, i, 1)" [disabled]="last" title="Move down" aria-label="Move down">▼</button>
+              <button type="button" class="icon-btn danger" (click)="remove(d.process.items, i)" title="Remove" aria-label="Remove step">
+                <app-icon name="trash" />
+              </button>
+            </div>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label [for]="'step-title-' + i">Title *</label>
+              <input [id]="'step-title-' + i" [(ngModel)]="step.title" />
+            </div>
+            <div class="field">
+              <label [for]="'step-text-' + i">Text</label>
+              <input [id]="'step-text-' + i" [(ngModel)]="step.text" />
+            </div>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- Google -->
+    <section class="panel">
+      <h2><app-icon name="eye" /> How the site shows up on Google</h2>
+      <div class="field">
+        <label for="seoTitle">Page title ({{ d.seo.title.length }}/70)</label>
+        <input id="seoTitle" maxlength="70" [(ngModel)]="d.seo.title" />
+      </div>
+      <div class="field">
+        <label for="seoDescription">Description ({{ d.seo.description.length }}/300)</label>
+        <textarea id="seoDescription" rows="2" maxlength="300" [(ngModel)]="d.seo.description"></textarea>
+        <small class="hint">One or two sentences about what you do and where. Google shows this under the title in search results.</small>
+      </div>
     </section>
   </div>
 

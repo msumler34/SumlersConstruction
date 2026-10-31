@@ -20,6 +20,10 @@ const FALLBACK_SITE: SiteInfo = {
   services: [],
   testimonials: [],
   gallery: [],
+  hero: { eyebrow: '', title: '', highlight: '', text: '' },
+  whyUs: { title: '', text: '', imageUrl: '', items: [] },
+  process: { title: '', text: '', imageUrl: '', items: [] },
+  seo: { title: '', description: '' },
 };
 
 @Injectable({ providedIn: 'root' })

@@ -1,19 +1,19 @@
 using System.Net;
-using Microsoft.Extensions.Options;
 using MimeKit;
 using Sumlers.Api.Options;
 
 namespace Sumlers.Api.Contact;
 
-/// <summary>Builds the lead notification for the business and the thank-you note for the customer.</summary>
-public sealed class ContactEmailBuilder(IOptions<EmailOptions> emailOptions)
+/// <summary>
+/// Builds the lead notification for the business and the thank-you note for the customer.
+/// The sender fills in the From address from the saved email settings.
+/// </summary>
+public sealed class ContactEmailBuilder
 {
-    private readonly EmailOptions _Email = emailOptions.Value;
-
-    public MimeMessage BuildLeadNotification(ContactRequest request)
+    public MimeMessage BuildLeadNotification(ContactRequest request, IEnumerable<string> recipients)
     {
         var message = CreateMessage($"New estimate request from {OneLine(request.Name)}");
-        message.To.Add(MailboxAddress.Parse(_Email.NotifyAddress));
+        foreach (var recipient in recipients) message.To.Add(MailboxAddress.Parse(recipient));
         message.ReplyTo.Add(new MailboxAddress(OneLine(request.Name), request.Email.Trim()));
         message.Body = new BodyBuilder { TextBody = LeadText(request), HtmlBody = LeadHtml(request) }.ToMessageBody();
         return message;
@@ -28,12 +28,7 @@ public sealed class ContactEmailBuilder(IOptions<EmailOptions> emailOptions)
         return message;
     }
 
-    private MimeMessage CreateMessage(string subject)
-    {
-        var message = new MimeMessage { Subject = subject };
-        message.From.Add(new MailboxAddress(_Email.FromName, _Email.FromAddress));
-        return message;
-    }
+    private static MimeMessage CreateMessage(string subject) => new() { Subject = subject };
 
     private static IEnumerable<(string Label, string Value)> Fields(ContactRequest request) =>
     [

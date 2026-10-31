@@ -1,8 +1,11 @@
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
 using Sumlers.Api.Admin;
+using Sumlers.Api.Backups;
 using Sumlers.Api.Contact;
-using Sumlers.Api.Options;
+using Sumlers.Api.Data;
+using Sumlers.Api.Health;
+using Sumlers.Api.Messages;
+using Sumlers.Api.Settings;
 using Sumlers.Api.Site;
 
 namespace Sumlers.Api;
@@ -25,6 +28,10 @@ public static class WebApplicationExtensions
         app.MapSiteEndpoints();
         app.MapContactEndpoints();
         app.MapAdminEndpoints();
+        app.MapSettingsEndpoints();
+        app.MapMessageEndpoints();
+        app.MapBackupEndpoints();
+        app.MapSumlersHealthChecks();
         app.MapGet("/api/{**path}", () => Results.NotFound());
 
         // Angular handles client-side routes such as /services and /contact.
@@ -34,8 +41,7 @@ public static class WebApplicationExtensions
 
     private static void UseUploadedFiles(this WebApplication app)
     {
-        var options = app.Services.GetRequiredService<IOptions<AdminOptions>>().Value;
-        var directory = AdminEndpoints.UploadsDirectory(app.Environment, options);
+        var directory = AdminEndpoints.UploadsDirectory(app.Services.GetRequiredService<AppDataFolder>());
         Directory.CreateDirectory(directory);
         app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(directory), RequestPath = "/uploads" });
     }

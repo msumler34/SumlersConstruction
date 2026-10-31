@@ -1,4 +1,5 @@
 {
   "/api": { "target": "http://localhost:5169", "secure": false },
-  "/uploads": { "target": "http://localhost:5169", "secure": false }
+  "/uploads": { "target": "http://localhost:5169", "secure": false },
+  "/health": { "target": "http://localhost:5169", "secure": false }
 }

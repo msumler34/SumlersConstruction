@@ -1,4 +1,5 @@
 using Sumlers.Api.Admin;
+using Sumlers.Api.Backups;
 using Sumlers.Api.Options;
 using Sumlers.Api.Promotions;
 
@@ -11,7 +12,9 @@ public static class SiteEndpoints
         app.MapGet("/api/site", async (ISiteStore store, CancellationToken ct) => Results.Ok(await store.GetAsync(ct)));
         app.MapGet("/api/promotions", GetActivePromotionsAsync);
 
-        app.MapPut("/api/admin/site", SaveSiteAsync).AddEndpointFilter<AdminKeyFilter>();
+        app.MapPut("/api/admin/site", SaveSiteAsync)
+            .AddEndpointFilter<AdminKeyFilter>()
+            .AddEndpointFilter<SnapshotBeforeChangeFilter>();
     }
 
     private static async Task<IResult> GetActivePromotionsAsync(IPromotionStore store, TimeProvider clock, CancellationToken ct)

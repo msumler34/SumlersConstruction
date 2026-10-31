@@ -1,6 +1,4 @@
-using Microsoft.Extensions.Options;
 using Sumlers.Api.Data;
-using Sumlers.Api.Options;
 
 namespace Sumlers.Api.Promotions;
 
@@ -8,30 +6,28 @@ namespace Sumlers.Api.Promotions;
 /// Keeps promotions in App_Data/promotions.json. The file is created from SeedData on first run,
 /// and it can be edited by hand or from the admin page.
 /// </summary>
-public sealed class JsonPromotionStore(IOptions<AdminOptions> options, IWebHostEnvironment environment) : IPromotionStore
+public sealed class JsonPromotionStore : IPromotionStore, IReloadable
 {
-    private readonly SemaphoreSlim _Lock = new(1, 1);
-    private readonly string _FilePath = Path.Combine(environment.ContentRootPath, options.Value.DataDirectory, "promotions.json");
-    private readonly string _SeedPath = Path.Combine(environment.ContentRootPath, "SeedData", "promotions.json");
-    private List<Promotion>? _Cache;
+    private readonly JsonDocument<List<Promotion>> _Document;
+
+    public JsonPromotionStore(AppDataFolder dataFolder, IWebHostEnvironment environment)
+    {
+        var seedPath = Path.Combine(environment.ContentRootPath, "SeedData", "promotions.json");
+        _Document = new JsonDocument<List<Promotion>>(
+            dataFolder.PathFor("promotions.json"),
+            async ct => await JsonFile.ReadAsync<List<Promotion>>(seedPath, ct) ?? []);
+    }
 
     public async Task<IReadOnlyList<Promotion>> GetAllAsync(CancellationToken cancellationToken)
     {
-        await _Lock.WaitAsync(cancellationToken);
-        try
-        {
-            return [.. (await LoadAsync(cancellationToken)).OrderBy(p => p.SortOrder).ThenBy(p => p.Title)];
-        }
-        finally
-        {
-            _Lock.Release();
-        }
+        var list = await _Document.GetAsync(cancellationToken);
+        return [.. list.OrderBy(p => p.SortOrder).ThenBy(p => p.Title)];
     }
 
     public async Task<Promotion> SaveAsync(Promotion promotion, CancellationToken cancellationToken)
     {
         var saved = string.IsNullOrWhiteSpace(promotion.Id) ? promotion with { Id = Guid.NewGuid().ToString("N")[..12] } : promotion;
-        await MutateAsync(list =>
+        await _Document.UpdateAsync(list =>
         {
             list.RemoveAll(p => p.Id == saved.Id);
             list.Add(saved);
@@ -41,33 +37,7 @@ public sealed class JsonPromotionStore(IOptions<AdminOptions> options, IWebHostE
     }
 
     public Task<bool> DeleteAsync(string id, CancellationToken cancellationToken) =>
-        MutateAsync(list => list.RemoveAll(p => p.Id == id) > 0, cancellationToken);
+        _Document.UpdateAsync(list => list.RemoveAll(p => p.Id == id) > 0, cancellationToken);
 
-    private async Task<bool> MutateAsync(Func<List<Promotion>, bool> change, CancellationToken cancellationToken)
-    {
-        await _Lock.WaitAsync(cancellationToken);
-        try
-        {
-            var list = await LoadAsync(cancellationToken);
-            if (!change(list)) return false;
-            await JsonFile.WriteAsync(_FilePath, list, cancellationToken);
-            return true;
-        }
-        catch
-        {
-            _Cache = null; // Reload from disk next time, so memory never shows a change that was not saved.
-            throw;
-        }
-        finally
-        {
-            _Lock.Release();
-        }
-    }
-
-    private async Task<List<Promotion>> LoadAsync(CancellationToken cancellationToken)
-    {
-        if (_Cache is not null) return _Cache;
-        var source = File.Exists(_FilePath) ? _FilePath : _SeedPath;
-        return _Cache = await JsonFile.ReadAsync<List<Promotion>>(source, cancellationToken) ?? [];
-    }
+    public void Reload() => _Document.Reload();
 }

@@ -7,12 +7,16 @@
   }
   <div class="hero-shade"></div>
   <div class="container hero-content">
-    <span class="eyebrow light">Decks · Remodels · Everything residential</span>
-    <h1>Built right.<br /><em>Built to last.</em></h1>
-    <p class="lead">
-      {{ site.businessName }} designs and builds custom decks, remodels kitchens and baths, and takes
-      care of every kind of project around your home.
-    </p>
+    @if (site.hero.eyebrow) {
+      <span class="eyebrow light">{{ site.hero.eyebrow }}</span>
+    }
+    <h1>
+      {{ site.hero.title }}
+      @if (site.hero.highlight) {
+        <br /><em>{{ site.hero.highlight }}</em>
+      }
+    </h1>
+    <p class="lead">{{ site.hero.text }}</p>
     <div class="hero-actions">
       <a routerLink="/contact" class="btn btn--primary">Get a free estimate <app-icon name="arrow" /></a>
       @if (site.messengerUrl) {
@@ -110,7 +114,9 @@
 <section class="section why">
   <div class="container why-grid">
     <div class="why-media" appReveal>
-      <img [src]="craftImage" alt="Our crew building a wooden deck" loading="lazy" />
+      @if (site.whyUs.imageUrl) {
+        <img [src]="site.whyUs.imageUrl" alt="Our crew at work" loading="lazy" />
+      }
       @if (site.yearsInBusiness) {
         <div class="why-stamp">
           <strong>{{ site.yearsInBusiness }}+</strong>
@@ -120,13 +126,10 @@
     </div>
     <div [appReveal]="120">
       <span class="eyebrow">Why homeowners choose us</span>
-      <h2>Craftsmanship you can see. Service you can count on.</h2>
-      <p class="why-lead">
-        We are a family-run crew that treats every home like our own. That means showing up on time,
-        explaining your options honestly and building work we are proud to put our name on.
-      </p>
+      <h2>{{ site.whyUs.title }}</h2>
+      <p class="why-lead">{{ site.whyUs.text }}</p>
       <div class="reasons">
-        @for (reason of reasons; track reason.title) {
+        @for (reason of site.whyUs.items; track $index) {
           <div class="reason">
             <span class="reason-icon"><app-icon [name]="reason.icon" /></span>
             <div>
@@ -173,11 +176,11 @@
   <div class="container">
     <div class="section-head section-head--center" appReveal>
       <span class="eyebrow">How we work</span>
-      <h2>A simple, stress-free process</h2>
-      <p>From the first call to the final walkthrough, you always know what happens next.</p>
+      <h2>{{ site.process.title }}</h2>
+      <p>{{ site.process.text }}</p>
     </div>
     <ol class="steps">
-      @for (step of steps; track step.title; let i = $index) {
+      @for (step of site.process.items; track $index; let i = $index) {
         <li [appReveal]="i * 110">
           <span class="step-num">{{ i + 1 }}</span>
           <h3>{{ step.title }}</h3>
