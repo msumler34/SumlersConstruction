@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Options;
+using Sumlers.Api.Backups;
+using Sumlers.Api.Data;
 using Sumlers.Api.Options;
 using Sumlers.Api.Promotions;
 
@@ -18,11 +20,14 @@ public static class AdminEndpoints
         var admin = app.MapGroup("/api/admin").AddEndpointFilter<AdminKeyFilter>();
         admin.MapGet("/verify", () => Results.NoContent());
         admin.MapGet("/promotions", async (IPromotionStore store, CancellationToken ct) => Results.Ok(await store.GetAllAsync(ct)));
-        admin.MapPost("/promotions", SaveAsync);
-        admin.MapPut("/promotions/{id}", (string id, Promotion promotion, IPromotionStore store, CancellationToken ct) =>
+
+        var changes = admin.MapGroup("/promotions").AddEndpointFilter<SnapshotBeforeChangeFilter>();
+        changes.MapPost("/", SaveAsync);
+        changes.MapPut("/{id}", (string id, Promotion promotion, IPromotionStore store, CancellationToken ct) =>
             SaveAsync(promotion with { Id = id }, store, ct));
-        admin.MapDelete("/promotions/{id}", async (string id, IPromotionStore store, CancellationToken ct) =>
+        changes.MapDelete("/{id}", async (string id, IPromotionStore store, CancellationToken ct) =>
             await store.DeleteAsync(id, ct) ? Results.NoContent() : Results.NotFound());
+
         admin.MapPost("/uploads", UploadAsync).DisableAntiforgery();
     }
 
@@ -33,8 +38,7 @@ public static class AdminEndpoints
         return Results.Ok(await store.SaveAsync(promotion, ct));
     }
 
-    private static async Task<IResult> UploadAsync(
-        IFormFile file, IOptions<AdminOptions> options, IWebHostEnvironment environment, CancellationToken ct)
+    private static async Task<IResult> UploadAsync(IFormFile file, IOptions<AdminOptions> options, AppDataFolder dataFolder, CancellationToken ct)
     {
         if (file.Length == 0 || file.Length > options.Value.MaxUploadBytes)
         {
@@ -47,13 +51,12 @@ public static class AdminEndpoints
 
         // The server picks the file name, so an uploaded name can never escape the uploads folder.
         var fileName = $"{Guid.NewGuid():N}{extension}";
-        var directory = UploadsDirectory(environment, options.Value);
+        var directory = UploadsDirectory(dataFolder);
         Directory.CreateDirectory(directory);
         await using var stream = File.Create(Path.Combine(directory, fileName));
         await file.CopyToAsync(stream, ct);
         return Results.Ok(new { url = $"/uploads/{fileName}" });
     }
 
-    public static string UploadsDirectory(IWebHostEnvironment environment, AdminOptions options) =>
-        Path.Combine(environment.ContentRootPath, options.DataDirectory, "uploads");
+    public static string UploadsDirectory(AppDataFolder dataFolder) => dataFolder.PathFor("uploads");
 }

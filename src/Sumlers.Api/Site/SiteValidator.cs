@@ -24,8 +24,21 @@ public static partial class SiteValidator
             .AddIf(site.Testimonials.Count > 30, nameof(site.Testimonials), "Add at most 30 reviews.")
             .AddIf(site.Testimonials.Any(t => string.IsNullOrWhiteSpace(t.Quote)), nameof(site.Testimonials), "Every review needs a quote.")
             .AddIf(site.Gallery.Count > 30, nameof(site.Gallery), "Add at most 30 gallery photos.")
-            .AddIf(site.Gallery.Any(g => string.IsNullOrWhiteSpace(g.ImageUrl) || !ValidationErrors.IsSafeUrl(g.ImageUrl)), nameof(site.Gallery), "Every gallery photo needs an image starting with https:// or /.");
+            .AddIf(site.Gallery.Any(g => string.IsNullOrWhiteSpace(g.ImageUrl) || !ValidationErrors.IsSafeUrl(g.ImageUrl)), nameof(site.Gallery), "Every gallery photo needs an image starting with https:// or /.")
+            .AddIf(site.Hero is { } hero && (hero.Title.Length > 80 || hero.Highlight.Length > 80 || hero.Text.Length > 400), nameof(site.Hero), "The headline is too long (80 characters per line, 400 for the text).")
+            .AddIf(site.Seo is { } seo && (seo.Title.Length > 70 || seo.Description.Length > 300), nameof(site.Seo), "Keep the Google title under 70 characters and the description under 300.");
+        AddSectionErrors(errors, site.WhyUs, nameof(site.WhyUs), "Why choose us");
+        AddSectionErrors(errors, site.Process, nameof(site.Process), "How we work");
         return errors;
+    }
+
+    private static void AddSectionErrors(ValidationErrors errors, PageSection? section, string field, string name)
+    {
+        if (section is null) return;
+        errors
+            .AddIf(section.Items.Count > 12, field, $"{name}: add at most 12 points.")
+            .AddIf(section.Items.Any(i => string.IsNullOrWhiteSpace(i.Title)), field, $"{name}: every point needs a title.")
+            .AddIf(!ValidationErrors.IsSafeUrl(section.ImageUrl), field, $"{name}: the photo must start with https:// or /.");
     }
 
     /// <summary>Gives each service a unique URL-friendly key, used for links such as /services#decks.</summary>

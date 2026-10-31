@@ -20,22 +20,35 @@
     } @else {
       <div class="tabbar">
         <div class="tabs" role="tablist">
-          <button type="button" role="tab" [class.active]="tab() === 'promotions'" [attr.aria-selected]="tab() === 'promotions'"
-            (click)="tab.set('promotions')">
-            <app-icon name="star" /> Promoted topics
-          </button>
-          <button type="button" role="tab" [class.active]="tab() === 'site'" [attr.aria-selected]="tab() === 'site'"
-            (click)="tab.set('site')">
-            <app-icon name="home" /> Business info
-          </button>
+          @for (t of tabs; track t.id) {
+            <button type="button" role="tab" [class.active]="tab() === t.id" [attr.aria-selected]="tab() === t.id"
+              (click)="tab.set(t.id)">
+              <app-icon [name]="t.icon" /> {{ t.label }}
+              @if (t.id === 'messages' && unread() > 0) {
+                <span class="count" [attr.aria-label]="unread() + ' unread'">{{ unread() }}</span>
+              }
+            </button>
+          }
         </div>
         <button class="btn btn--outline btn--sm" type="button" (click)="admin.signOut()">Sign out</button>
       </div>
 
-      @if (tab() === 'promotions') {
-        <app-promotions-editor />
-      } @else {
-        <app-site-editor />
+      @switch (tab()) {
+        @case ('promotions') {
+          <app-promotions-editor />
+        }
+        @case ('site') {
+          <app-site-editor />
+        }
+        @case ('messages') {
+          <app-messages-tab (unreadChange)="unread.set($event)" />
+        }
+        @case ('settings') {
+          <app-settings-tab />
+        }
+        @case ('backups') {
+          <app-backups-tab />
+        }
       }
     }
   </div>

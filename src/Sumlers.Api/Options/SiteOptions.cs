@@ -22,6 +22,52 @@ public sealed class SiteOptions
     public List<ServiceOffering> Services { get; set; } = [];
     public List<Testimonial> Testimonials { get; set; } = [];
     public List<GalleryImage> Gallery { get; set; } = [];
+
+    // Page text. Nullable so a site.json saved before these existed still picks up the defaults.
+    public HeroText? Hero { get; set; }
+    public PageSection? WhyUs { get; set; }
+    public PageSection? Process { get; set; }
+    public SeoText? Seo { get; set; }
+
+    /// <summary>Fills page-text sections that a saved site.json does not have yet.</summary>
+    public SiteOptions WithMissingSectionsFrom(SiteOptions defaults)
+    {
+        Hero ??= defaults.Hero;
+        WhyUs ??= defaults.WhyUs;
+        Process ??= defaults.Process;
+        Seo ??= defaults.Seo;
+        return this;
+    }
+}
+
+public sealed class HeroText
+{
+    public string Eyebrow { get; set; } = "";
+    public string Title { get; set; } = "";
+    public string Highlight { get; set; } = "";
+    public string Text { get; set; } = "";
+}
+
+/// <summary>A home page section with a heading, intro text, optional photo and a list of points.</summary>
+public sealed class PageSection
+{
+    public string Title { get; set; } = "";
+    public string Text { get; set; } = "";
+    public string ImageUrl { get; set; } = "";
+    public List<SectionItem> Items { get; set; } = [];
+}
+
+public sealed class SectionItem
+{
+    public string Icon { get; set; } = "";
+    public string Title { get; set; } = "";
+    public string Text { get; set; } = "";
+}
+
+public sealed class SeoText
+{
+    public string Title { get; set; } = "";
+    public string Description { get; set; } = "";
 }
 
 public sealed class ServiceOffering

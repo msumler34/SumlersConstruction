@@ -1,8 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace Sumlers.Api.Options;
 
 /// <summary>
-/// SMTP settings. When Host is empty, messages are written as .eml files to PickupDirectory
-/// so the contact form works on a dev machine without a mail server.
+/// SMTP settings. appsettings.json holds the defaults; the admin Settings tab saves its own copy.
+/// When Host is empty, messages are written as .eml files to App_Data/outbox instead of being sent.
 /// </summary>
 public sealed class EmailOptions
 {
@@ -15,9 +17,22 @@ public sealed class EmailOptions
     public string Password { get; set; } = "";
     public string FromAddress { get; set; } = "";
     public string FromName { get; set; } = "Sumlers Construction Website";
-    public string NotifyAddress { get; set; } = "";
-    public bool SendCustomerConfirmation { get; set; } = true;
-    public string PickupDirectory { get; set; } = "App_Data/outbox";
 
+    /// <summary>Who receives new estimate requests from the contact form.</summary>
+    public List<string> NotifyAddresses { get; set; } = [];
+
+    public bool SendCustomerConfirmation { get; set; } = true;
+
+    [JsonIgnore]
     public bool UsesSmtp => !string.IsNullOrWhiteSpace(Host);
+}
+
+public sealed class AlertOptions
+{
+    public const string SectionName = "Alerts";
+
+    /// <summary>Who gets an email when something goes wrong on the site.</summary>
+    public List<string> Recipients { get; set; } = [];
+
+    public bool EmailWeeklyBackup { get; set; }
 }

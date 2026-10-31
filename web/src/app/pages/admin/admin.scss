@@ -92,3 +92,20 @@
     color: var(--amber);
   }
 }
+
+.count {
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--amber);
+  color: #fff;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .tabs {
+    flex-wrap: wrap;
+    border-radius: var(--radius);
+  }
+}

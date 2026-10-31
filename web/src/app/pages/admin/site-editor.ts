@@ -1,5 +1,14 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Injector,
+  afterNextRender,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../core/admin.service';
 import { SiteInfo } from '../../core/models';
@@ -19,8 +28,11 @@ import { AdminMessage, describeError } from './admin-errors';
 export class SiteEditor {
   private readonly admin = inject(AdminService);
   private readonly siteService = inject(SiteService);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
 
   protected readonly serviceIcons = ['deck', 'home', 'porch', 'tools', 'hammer', 'ruler', 'shield', 'handshake'];
+  protected readonly pointIcons = ['check', 'shield', 'ruler', 'handshake', 'clock', 'star', 'hammer', 'tools', 'home', 'chat'];
 
   /** Bound with ngModel and changed in place; `edits` ticks on every change so `dirty` recomputes. */
   protected readonly draft = signal<SiteInfo | null>(null);
@@ -42,9 +54,19 @@ export class SiteEditor {
     this.edits.update((n) => n + 1);
   }
 
-  protected add<T>(list: T[], item: T): void {
+  /** Adds an item at the end of its list, then scrolls to it and puts the cursor in its first box. */
+  protected add<T>(list: T[], item: T, listName: string): void {
     list.push(item);
     this.changed();
+    afterNextRender(() => this.revealLastItem(listName), { injector: this.injector });
+  }
+
+  private revealLastItem(listName: string): void {
+    const items = this.host.nativeElement.querySelectorAll<HTMLElement>(`[data-list="${listName}"] .item`);
+    const last = items[items.length - 1];
+    if (!last) return;
+    last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    last.querySelector<HTMLElement>('input:not([type=file]), textarea')?.focus({ preventScroll: true });
   }
 
   protected remove<T>(list: T[], index: number): void {
@@ -118,6 +140,10 @@ function withDefaults(site: SiteInfo): SiteInfo {
     services: site.services ?? [],
     testimonials: site.testimonials ?? [],
     gallery: site.gallery ?? [],
+    hero: site.hero ?? { eyebrow: '', title: '', highlight: '', text: '' },
+    whyUs: site.whyUs ?? { title: '', text: '', imageUrl: '', items: [] },
+    process: site.process ?? { title: '', text: '', imageUrl: '', items: [] },
+    seo: site.seo ?? { title: '', description: '' },
   };
 }
 

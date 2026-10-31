@@ -1,0 +1,61 @@
+<header class="top">
+  <div>
+    <h1>Messages</h1>
+    <p>Every estimate request from the contact form, saved here even if the email about it failed.</p>
+  </div>
+</header>
+
+@if (message(); as m) {
+  <p class="msg" [class.error]="m.kind === 'error'" role="status">{{ m.text }}</p>
+}
+
+@if (failedCount() > 0) {
+  <p class="msg error">
+    {{ failedCount() }} message(s) could not be emailed. They are safe below. Check the mail server in the Settings tab.
+  </p>
+}
+
+<div class="list">
+  @for (item of messages(); track item.id) {
+    <article class="card" [class.unread]="!item.isRead">
+      <header class="card-head">
+        <div>
+          <strong class="name">{{ item.name }}</strong>
+          @if (item.service) {
+            <span class="tag">{{ item.service }}</span>
+          }
+          @if (item.emailStatus === 'Failed') {
+            <span class="tag failed">Email failed</span>
+          }
+        </div>
+        <time [attr.datetime]="item.receivedAt">{{ item.receivedAt | date: 'MMM d, y, h:mm a' }}</time>
+      </header>
+
+      <ul class="contact">
+        <li><app-icon name="mail" /><a [href]="'mailto:' + item.email">{{ item.email }}</a></li>
+        @if (item.phone) {
+          <li><app-icon name="phone" /><a [href]="phoneLink(item.phone)">{{ item.phone }}</a></li>
+        }
+        @if (item.address) {
+          <li><app-icon name="pin" /><span>{{ item.address }}</span></li>
+        }
+      </ul>
+
+      <p class="body">{{ item.message }}</p>
+
+      <div class="actions">
+        <a class="btn btn--primary btn--sm" [href]="replyLink(item)"><app-icon name="mail" /> Reply</a>
+        <button type="button" class="btn btn--outline btn--sm" (click)="toggleRead(item)">
+          {{ item.isRead ? 'Mark unread' : 'Mark read' }}
+        </button>
+        <button type="button" class="icon-btn danger" (click)="remove(item)" title="Delete" aria-label="Delete message">
+          <app-icon name="trash" />
+        </button>
+      </div>
+    </article>
+  } @empty {
+    @if (loaded()) {
+      <p class="empty">No messages yet. Requests from the contact form show up here.</p>
+    }
+  }
+</div>

@@ -1,0 +1,40 @@
+<header class="top">
+  <div>
+    <h1>Backups</h1>
+    <p>
+      The site backs itself up every day and before edits, and keeps the newest 40. A backup holds all content, photos,
+      messages and settings. Download one now and then and keep it somewhere safe.
+    </p>
+  </div>
+  <div class="top-actions">
+    <label class="btn btn--outline btn--sm" [class.disabled]="busy()">
+      <app-icon name="upload" /> Upload a backup
+      <input type="file" accept=".zip,application/zip" (change)="upload($event)" [disabled]="busy()" hidden />
+    </label>
+    <button class="btn btn--primary btn--sm" type="button" (click)="create()" [disabled]="busy()">
+      <app-icon name="plus" /> Back up now
+    </button>
+  </div>
+</header>
+
+@if (message(); as m) {
+  <p class="msg" [class.error]="m.kind === 'error'" role="status">{{ m.text }}</p>
+}
+
+<div class="table">
+  @for (b of backups(); track b.name; let first = $first) {
+    @let when = b.createdAt | date: 'EEE, MMM d, y, h:mm a';
+    <div class="row" [class.newest]="first">
+      <div class="when">
+        <strong>{{ when }}</strong>
+        <span>{{ reasonLabel(b.reason) }} · {{ size(b.sizeBytes) }}</span>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn--outline btn--sm" (click)="download(b)">Download</button>
+        <button type="button" class="btn btn--outline btn--sm restore" (click)="restore(b, when)" [disabled]="busy()">Restore</button>
+      </div>
+    </div>
+  } @empty {
+    <p class="empty">No backups yet. The first one is made automatically within an hour, or click "Back up now".</p>
+  }
+</div>

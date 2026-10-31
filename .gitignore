@@ -7,3 +7,4 @@ node_modules/
 src/Sumlers.Api/App_Data/
 src/Sumlers.Api/wwwroot/
 appsettings.Production.json
+src/Sumlers.Api/web

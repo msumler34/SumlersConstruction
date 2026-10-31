@@ -1,0 +1,96 @@
+<header class="top">
+  <div>
+    <h1>Settings</h1>
+    <p>How the website sends email, who gets estimate requests, and who hears about problems.</p>
+  </div>
+</header>
+
+@if (message(); as m) {
+  <p class="msg" [class.error]="m.kind === 'error'" role="status">{{ m.text }}</p>
+}
+
+@let d = draft();
+@if (d) {
+  <div class="sections" (input)="changed()" (change)="changed()">
+    <section class="panel">
+      <h2><app-icon name="mail" /> Who gets emails</h2>
+      <div class="field">
+        <label for="notify">New estimate requests go to (one address per line)</label>
+        <textarea id="notify" rows="2" [(ngModel)]="d.notifyText"></textarea>
+      </div>
+      <div class="field">
+        <label for="alerts">Problem alerts go to (one address per line)</label>
+        <textarea id="alerts" rows="2" [(ngModel)]="d.recipientsText"></textarea>
+        <small class="hint">These people get an email when something goes wrong: a request could not be emailed, a backup failed, the disk is nearly full, or the site hit an error.</small>
+      </div>
+      <div class="checks">
+        <label><input type="checkbox" [(ngModel)]="d.email.sendCustomerConfirmation" /> Send customers a "thanks, we got your message" email</label>
+        <label><input type="checkbox" [(ngModel)]="d.alerts.emailWeeklyBackup" /> Email a backup to the alert addresses every week</label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2><app-icon name="tools" /> Mail server (SMTP)</h2>
+      <p class="hint">
+        Your email or hosting provider gives you these. Leave "Server" empty to turn email off: messages are still saved under Messages.
+      </p>
+      <div class="grid2">
+        <div class="field">
+          <label for="host">Server</label>
+          <input id="host" [(ngModel)]="d.email.host" placeholder="smtp.example.com" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="port">Port</label>
+          <input id="port" type="number" [(ngModel)]="d.email.port" placeholder="587" />
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" [(ngModel)]="d.email.username" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" [(ngModel)]="d.email.password" autocomplete="new-password"
+            [placeholder]="hasPassword() ? 'Saved. Leave blank to keep it' : ''" />
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="fromAddress">Send from address</label>
+          <input id="fromAddress" type="email" [(ngModel)]="d.email.fromAddress" placeholder="website@yourdomain.com" />
+        </div>
+        <div class="field">
+          <label for="fromName">Send from name</label>
+          <input id="fromName" [(ngModel)]="d.email.fromName" />
+        </div>
+      </div>
+      <div class="checks">
+        <label><input type="checkbox" [(ngModel)]="d.email.useStartTls" /> Use STARTTLS (leave on for port 587)</label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2><app-icon name="clock" /> Uptime monitoring</h2>
+      <p class="hint">
+        If the website itself is down it cannot email anyone, so a free outside service should watch it. Sign up at
+        <a href="https://uptimerobot.com" target="_blank" rel="noopener">UptimeRobot</a> (or similar), add an HTTP monitor for
+        the address below, checked every 5 minutes, and enter the alert addresses there too.
+      </p>
+      <code class="url">{{ healthUrl }}</code>
+    </section>
+  </div>
+
+  <div class="savebar show">
+    <span>{{ dirty() ? 'You have unsaved changes.' : 'Check the mail server works:' }}</span>
+    <div>
+      <button type="button" class="btn btn--outline btn--sm" (click)="sendTest()" [disabled]="busy() || dirty()"
+        [title]="dirty() ? 'Save first' : 'Sends a test email to every address above'">
+        Send test email
+      </button>
+      <button type="button" class="btn btn--primary btn--sm" (click)="save()" [disabled]="busy() || !dirty()">
+        {{ busy() ? 'Working…' : 'Save settings' }}
+      </button>
+    </div>
+  </div>
+}
