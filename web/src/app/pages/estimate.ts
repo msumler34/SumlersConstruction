@@ -28,6 +28,7 @@ interface PriceGuide {
     button { background: #c9803a; color: white; border: none; padding: 0.8rem 1.4rem; border-radius: 6px; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
     button:disabled { opacity: 0.5; }
     .success { background: #e8f5e9; padding: 1rem; border-radius: 8px; margin-top: 1rem; }
+    .contact-note { font-size: 0.9rem; color: #666; margin: 0.3rem 0 0.8rem; }
   `,
   template: `
     <div class="wrap">
@@ -42,7 +43,7 @@ interface PriceGuide {
         }
       </select>
 
-      <label>Photo of your current space</label>
+      <label>Photo of your current space (optional)</label>
       <input type="file" accept="image/*" (change)="onFile($event)" />
 
       @if (previewUrl()) {
@@ -60,23 +61,25 @@ interface PriceGuide {
         </div>
       }
 
-      <label>Your name</label>
+      <label>Your name (optional)</label>
       <input type="text" [(ngModel)]="name" />
 
-      <label>Phone</label>
-      <input type="tel" [(ngModel)]="phone" />
+      <p class="contact-note">How should we reach you? Just fill in one.</p>
+
+      <label>Phone (for text)</label>
+      <input type="tel" [(ngModel)]="phone" placeholder="(816) 555-1234" />
 
       <label>Email</label>
-      <input type="email" [(ngModel)]="email" />
+      <input type="email" [(ngModel)]="email" placeholder="you@email.com" />
 
-      <label>Anything else we should know?</label>
+      <label>Anything else we should know? (optional)</label>
       <textarea rows="3" [(ngModel)]="notes"></textarea>
 
       <button (click)="submit()" [disabled]="!canSubmit()">Get my estimate</button>
 
       @if (submitted()) {
         <div class="success">
-          Thanks! We received your photo and details. We’ll review it and follow up with a clearer picture and next steps.
+          Thanks! We received your details. We’ll follow up with a clearer picture and next steps.
         </div>
       }
     </div>
@@ -115,7 +118,7 @@ export class Estimate {
   }
 
   canSubmit() {
-    return this.projectType && this.name && this.phone && this.email;
+    return this.projectType && (this.phone || this.email);
   }
 
   submit() {
