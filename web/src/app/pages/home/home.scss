@@ -29,7 +29,7 @@
 
 .hero-content {
   position: relative;
-  animation: rise 1s 0.15s var(--ease) both;
+  animation: rise 1s var(--ease) both;
 
   h1 {
     max-width: 760px;
@@ -119,9 +119,9 @@
   }
 }
 
+/* Slides up without fading in: hidden text would hold back the page's first full paint (LCP). */
 @keyframes rise {
   from {
-    opacity: 0;
     transform: translateY(30px);
   }
 }

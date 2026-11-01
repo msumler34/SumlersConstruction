@@ -169,11 +169,9 @@ p {
   font: 600 0.98rem/1 var(--font-body);
   text-decoration: none;
   cursor: pointer;
+  /* Only the lift animates: color changes on hover are instant, so no color animation can run while the page loads. */
   transition:
     transform 0.25s var(--ease),
-    background-color 0.25s,
-    border-color 0.25s,
-    color 0.25s,
     box-shadow 0.25s;
   white-space: nowrap;
 
