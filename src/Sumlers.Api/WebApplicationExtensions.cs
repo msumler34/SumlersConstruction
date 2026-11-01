@@ -21,7 +21,7 @@ public static class WebApplicationExtensions
 
         app.Use(AddSecurityHeaders);
         app.UseMiddleware<MainAddressRedirect>();
-        app.UseStaticFiles();
+        app.UseStaticFiles(new StaticFileOptions { OnPrepareResponse = StaticFileCaching.ForWebRoot });
         app.UseUploadedFiles();
         app.UseRateLimiter();
 
@@ -43,7 +43,7 @@ public static class WebApplicationExtensions
     {
         var directory = AdminEndpoints.UploadsDirectory(app.Services.GetRequiredService<AppDataFolder>());
         Directory.CreateDirectory(directory);
-        app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(directory), RequestPath = "/uploads" });
+        app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(directory), RequestPath = "/uploads", OnPrepareResponse = StaticFileCaching.ForUploads });
     }
 
     private static Task AddSecurityHeaders(HttpContext context, Func<Task> next)
