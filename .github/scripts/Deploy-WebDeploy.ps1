@@ -8,10 +8,13 @@
     overwrite or delete it. The logs folder is skipped for the same reason.
 
     Connection values come from the WEBDEPLOY_* environment variables set by the workflow.
+    With -WhatIf, Web Deploy connects, signs in and lists what it would change, but changes nothing.
 #>
 param(
     [Parameter(Mandatory)]
-    [string] $PublishDirectory
+    [string] $PublishDirectory,
+
+    [switch] $WhatIf
 )
 
 $ErrorActionPreference = 'Stop'
@@ -29,13 +32,37 @@ if (-not (Test-Path -LiteralPath $msdeploy)) {
     if (-not (Test-Path -LiteralPath $msdeploy)) { throw "Web Deploy did not install to $msdeploy." }
 }
 
-$env:DEPLOY_SOURCE = (Resolve-Path -LiteralPath $PublishDirectory).Path
+$source = (Resolve-Path -LiteralPath $PublishDirectory).Path
+$dest = @(
+    "contentPath=""$env:WEBDEPLOY_SITE"""
+    "computerName=""$env:WEBDEPLOY_URL"""
+    "userName=""$env:WEBDEPLOY_USERNAME"""
+    "password=""$env:WEBDEPLOY_PASSWORD"""
+    'authType="Basic"'
+) -join ','
 
-# --% passes the rest of the line to msdeploy unchanged, with only %VAR% expanded. That keeps the
-# password's symbols (commas, pipes, quotes) from being reinterpreted by PowerShell.
-& $msdeploy --% -verb:sync -source:contentPath="%DEPLOY_SOURCE%" -dest:contentPath="%WEBDEPLOY_SITE%",computerName="%WEBDEPLOY_URL%",userName="%WEBDEPLOY_USERNAME%",password="%WEBDEPLOY_PASSWORD%",authType="Basic" -enableRule:AppOffline -skip:objectName=dirPath,absolutePath="\\App_Data$" -skip:objectName=filePath,absolutePath="\\App_Data\\" -skip:objectName=dirPath,absolutePath="\\logs$" -skip:objectName=filePath,absolutePath="\\logs\\" -retryAttempts:3 -retryInterval:3000
+$arguments = @(
+    '-verb:sync'
+    "-source:contentPath=""$source"""
+    "-dest:$dest"
+    '-enableRule:AppOffline'
+    '-skip:objectName=dirPath,absolutePath="\\App_Data$"'
+    '-skip:objectName=filePath,absolutePath="\\App_Data\\"'
+    '-skip:objectName=dirPath,absolutePath="\\logs$"'
+    '-skip:objectName=filePath,absolutePath="\\logs\\"'
+    '-retryAttempts:3'
+    '-retryInterval:3000'
+)
+if ($WhatIf) { $arguments += '-whatif' }
 
-if ($LASTEXITCODE -ne 0) {
-    throw "Web Deploy failed with exit code $LASTEXITCODE."
+# msdeploy reads its raw command line, and PowerShell re-quotes arguments that contain quotes.
+# Starting it through ProcessStartInfo passes this exact string, so quotes and password symbols arrive unchanged.
+$startInfo = [System.Diagnostics.ProcessStartInfo]::new($msdeploy, ($arguments -join ' '))
+$startInfo.UseShellExecute = $false
+$process = [System.Diagnostics.Process]::Start($startInfo)
+$process.WaitForExit()
+
+if ($process.ExitCode -ne 0) {
+    throw "Web Deploy failed with exit code $($process.ExitCode)."
 }
-Write-Host 'Deploy finished.'
+Write-Host ($WhatIf ? 'Dry run finished: Web Deploy connected and listed the changes above. Nothing was changed.' : 'Deploy finished.')

@@ -56,6 +56,15 @@ jobs:
       - name: Publish API
         run: dotnet publish src/Sumlers.Api --configuration Release --output publish
 
+      # Pull requests connect and list what a deploy would change, without changing anything,
+      # so deploy problems show up before the merge instead of after it.
+      - name: Dry-run deploy (changes nothing)
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        shell: pwsh
+        env:
+          WEBDEPLOY_PASSWORD: ${{ secrets.WEBDEPLOY_PASSWORD }}
+        run: ./.github/scripts/Deploy-WebDeploy.ps1 -PublishDirectory publish -WhatIf
+
       # The live admin key is not deployed from here: it is the Admin__ApiKey environment variable
       # on the SmarterASP application pool, so it never leaves the server.
       - name: Deploy to SmarterASP.NET
