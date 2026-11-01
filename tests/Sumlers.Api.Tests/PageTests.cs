@@ -133,6 +133,16 @@ public sealed class PageTests(SumlersApiFactory factory) : IClassFixture<Sumlers
     }
 
     [Fact]
+    public void PageTemplate_KeepsTheGoogleVerificationTag()
+    {
+        const string tag = """<meta name="google-site-verification" content="abc">""";
+
+        var html = WebRootPageTemplate.WithoutHeadTags($"<head><title>Old</title>{tag}</head>");
+
+        Assert.Equal($"<head>{tag}</head>", html);
+    }
+
+    [Fact]
     public async Task PageMeta_MatchesWhatTheServerWritesIntoThePage()
     {
         var meta = await Client().GetFromJsonAsync<PageMeta>("/api/page-meta?path=/bathroom-remodeling");
