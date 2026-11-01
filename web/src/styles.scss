@@ -1,3 +1,7 @@
+// Served from this site, not Google Fonts: one less server to connect to before the text can show.
+@use '@fontsource-variable/fraunces/opsz.css';
+@use '@fontsource-variable/inter';
+
 :root {
   --ink: #1b2326;
   --ink-2: #263236;
@@ -11,8 +15,8 @@
   --amber-light: #f3dcc2;
   --line: rgba(27, 35, 38, 0.1);
 
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces Variable', Georgia, serif;
+  --font-body: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --radius: 18px;
   --radius-sm: 10px;
