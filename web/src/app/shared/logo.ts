@@ -40,9 +40,9 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       <path d="M18 38h28M18 45h28M18 52h28" stroke="#1b2326" stroke-width="4" stroke-linecap="round" />
     </svg>
     <span class="word">
-      <span class="name">Sumlers</span>
-      <span class="sub">Construction</span>
-    </span>
+  <span class="name">Sumler's</span>
+  <span class="sub">Construction and Remodeling</span>
+</span>
   `,
 })
 export class Logo {}
