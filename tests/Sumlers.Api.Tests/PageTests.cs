@@ -142,6 +142,37 @@ public sealed class PageTests(SumlersApiFactory factory) : IClassFixture<Sumlers
         Assert.Null(meta.StructuredData);
     }
 
+    [Fact]
+    public async Task SiteSavedBeforeServicePages_GetsThePagesAndKeepsTheOwnersText()
+    {
+        using var legacy = new SumlersApiFactory();
+        Directory.CreateDirectory(legacy.DataDirectory);
+        await File.WriteAllTextAsync(Path.Combine(legacy.DataDirectory, "site.json"), """
+            {
+              "BusinessName": "Sumlers Construction",
+              "Services": [
+                { "Key": "decks", "Title": "Decks", "Summary": "The owner's own deck text." },
+                { "Key": "patios", "Title": "Patios", "Summary": "A service the owner added." }
+              ]
+            }
+            """);
+        var client = legacy.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+
+        var site = (await client.GetFromJsonAsync<SiteOptions>("/api/site"))!;
+        var decks = site.Services[0];
+        var redirect = await client.GetAsync("/decks");
+
+        Assert.Equal("deck-construction", decks.Key);
+        Assert.Equal("The owner's own deck text.", decks.Summary);
+        Assert.Equal(["decks"], decks.PreviousKeys);
+        Assert.NotEmpty(decks.Page!.Faqs);
+        Assert.Equal("patios", site.Services[1].Key);
+        Assert.Contains(site.Services, s => s.Key == "kitchen-remodeling");
+        Assert.Single(site.Services, s => s.Key == "deck-construction");
+        Assert.NotNull(site.ServicesPage);
+        Assert.Equal("/deck-construction", redirect.Headers.Location?.ToString());
+    }
+
     private HttpClient Client() => factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
     private async Task<SiteOptions> SiteAsync() => (await Client().GetFromJsonAsync<SiteOptions>("/api/site"))!;

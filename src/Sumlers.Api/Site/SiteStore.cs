@@ -22,8 +22,12 @@ public sealed class JsonSiteStore : ISiteStore, IReloadable
         _Document = new JsonDocument<SiteOptions>(dataFolder.PathFor("site.json"), _ => Task.FromResult(defaults.CurrentValue));
     }
 
-    public async Task<SiteOptions> GetAsync(CancellationToken cancellationToken) =>
-        (await _Document.GetAsync(cancellationToken)).WithMissingSectionsFrom(_Defaults.CurrentValue);
+    public async Task<SiteOptions> GetAsync(CancellationToken cancellationToken)
+    {
+        var site = await _Document.GetAsync(cancellationToken);
+        ServicePagesUpgrade.Apply(site, _Defaults.CurrentValue);
+        return site.WithMissingSectionsFrom(_Defaults.CurrentValue);
+    }
 
     public Task SaveAsync(SiteOptions site, CancellationToken cancellationToken) => _Document.SetAsync(site, cancellationToken);
 
