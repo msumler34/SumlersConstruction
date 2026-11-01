@@ -125,18 +125,18 @@ export class Estimate {
     const guide = this.selectedGuide();
     const subject = encodeURIComponent('Rough Estimate Request');
     const body = encodeURIComponent(
-      `Name: ${this.name || 'Not given'}\n` +
-      `Project: ${guide?.label || this.projectType}\n` +
-      `Range: \[ {guide?.low.toLocaleString()} – \]{guide?.high.toLocaleString()}\n` +
-      `Phone: ${this.phone || 'Not given'}\n` +
-      `Email: ${this.email || 'Not given'}\n` +
-      `Notes: ${this.notes || 'None'}`
+      'Name: ' + (this.name || 'Not given') + '\n' +
+      'Project: ' + (guide?.label || this.projectType) + '\n' +
+      'Range: $' + (guide?.low.toLocaleString() || '') + ' – $' + (guide?.high.toLocaleString() || '') + '\n' +
+      'Phone: ' + (this.phone || 'Not given') + '\n' +
+      'Email: ' + (this.email || 'Not given') + '\n' +
+      'Notes: ' + (this.notes || 'None')
     );
 
     if (this.email) {
-      window.location.href = `mailto:mattsumler@gmail.com?subject=\( {subject}&body= \){body}`;
+      window.location.href = 'mailto:mattsumler@gmail.com?subject=' + subject + '&body=' + body;
     } else if (this.phone) {
-      window.location.href = `sms:8163042469?body=${body}`;
+      window.location.href = 'sms:8163042469?body=' + body;
     }
 
     this.submitted.set(true);
