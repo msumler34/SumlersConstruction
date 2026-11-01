@@ -10,9 +10,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       gap: 12px;
       color: inherit;
     }
-    svg {
-      width: 42px;
-      height: 42px;
+    img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
     }
     .word {
       display: grid;
@@ -27,22 +28,18 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     .sub {
       font-size: 0.62rem;
       font-weight: 600;
-      letter-spacing: 0.34em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       opacity: 0.75;
       margin-top: 5px;
     }
   `,
   template: `
-    <svg viewBox="0 0 64 64" aria-hidden="true">
-      <rect width="64" height="64" rx="14" fill="#c9803a" />
-      <path d="M12 30 32 14l20 16" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M18 38h28M18 45h28M18 52h28" stroke="#1b2326" stroke-width="4" stroke-linecap="round" />
-    </svg>
+    <img src="/sumler-logo.png" alt="Sumler's Construction and Remodeling" />
     <span class="word">
-  <span class="name">Sumler's</span>
-  <span class="sub">Construction and Remodeling</span>
-</span>
+      <span class="name">Sumler's</span>
+      <span class="sub">Construction and Remodeling</span>
+    </span>
   `,
 })
 export class Logo {}
