@@ -4,10 +4,11 @@ import { SeoService } from './core/seo.service';
 import { Footer } from './layout/footer';
 import { Header } from './layout/header';
 import { MessengerButton } from './layout/messenger-button';
+import { EstimateButton } from './layout/estimate-button';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer, MessengerButton],
+  imports: [RouterOutlet, Header, Footer, MessengerButton, EstimateButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-header />
@@ -16,11 +17,11 @@ import { MessengerButton } from './layout/messenger-button';
     </main>
     <app-footer />
     <app-messenger-button />
+    <app-estimate-button />
   `,
 })
 export class App {
   constructor() {
-    // Each page's title and Google description come from the admin page, so the owner can change them without a publish.
     inject(SeoService).start();
   }
 }
