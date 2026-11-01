@@ -93,7 +93,7 @@ export interface PageSection {
 export interface SeoText {
   title: string;
   description: string;
-  /** The main address, such as https://sumlersconstruction.com. */
+  /** The main address, such as https://sumlerhomes.com. */
   siteUrl: string;
 }
 

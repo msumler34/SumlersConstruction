@@ -21,7 +21,7 @@ env:
   WEBDEPLOY_URL: https://win8129.site4now.net:8172/msdeploy.axd?site=mattsumler-001-site1
   WEBDEPLOY_SITE: mattsumler-001-site1
   WEBDEPLOY_USERNAME: mattsumler-001
-  SITE_URL: https://mattsumler-001-site1.ltempurl.com
+  SITE_URL: https://sumlerhomes.com
 
 jobs:
   build:

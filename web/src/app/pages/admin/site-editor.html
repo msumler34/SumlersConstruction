@@ -290,10 +290,11 @@
       </div>
       <div class="field">
         <label for="siteUrl">Website address</label>
-        <input id="siteUrl" type="url" [(ngModel)]="d.seo.siteUrl" placeholder="https://sumlersconstruction.com" />
+        <input id="siteUrl" type="url" [(ngModel)]="d.seo.siteUrl" placeholder="https://sumlerhomes.com" />
         <small class="hint">
-          The address customers use, with nothing after the name. Google links and the sitemap use it. Leave it empty
-          until the domain works with https.
+          The address customers use, with nothing after the name. Google links and the sitemap use it, and every other
+          address (http://, www. and the temporary hosting address) then sends visitors here. Only set it once this
+          address opens with the padlock. The admin page stays open on every address, so a wrong value can be fixed.
         </small>
       </div>
     </section>

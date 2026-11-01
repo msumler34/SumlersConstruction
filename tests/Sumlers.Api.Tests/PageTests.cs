@@ -98,9 +98,9 @@ public sealed class PageTests(SumlersApiFactory factory) : IClassFixture<Sumlers
     }
 
     [Theory]
-    [InlineData("http://sumlersconstruction.com")]
-    [InlineData("https://sumlersconstruction.com/home")]
-    [InlineData("sumlersconstruction.com")]
+    [InlineData("http://sumlerhomes.com")]
+    [InlineData("https://sumlerhomes.com/home")]
+    [InlineData("sumlerhomes.com")]
     public async Task SiteSave_RejectsWebsiteAddressesThatAreNotJustHttpsAndAName(string url)
     {
         var site = await SiteAsync();

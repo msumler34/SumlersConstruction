@@ -72,7 +72,7 @@ public sealed class SeoText
     public string Title { get; set; } = "";
     public string Description { get; set; } = "";
 
-    /// <summary>The main address, such as https://sumlersconstruction.com. Google links and the sitemap use it.</summary>
+    /// <summary>The main address, such as https://sumlerhomes.com. Google links and the sitemap use it.</summary>
     public string SiteUrl { get; set; } = "";
 }
 

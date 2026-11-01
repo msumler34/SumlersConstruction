@@ -20,6 +20,7 @@ public static class WebApplicationExtensions
         if (!app.Environment.IsDevelopment()) app.UseHsts();
 
         app.Use(AddSecurityHeaders);
+        app.UseMiddleware<MainAddressRedirect>();
         app.UseStaticFiles();
         app.UseUploadedFiles();
         app.UseRateLimiter();
