@@ -1,17 +1,27 @@
-import { provideHttpClient, withFetch } from '@angular/common/http';
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { SeoService } from './core/seo.service';
+import { Footer } from './layout/footer';
+import { Header } from './layout/header';
+import { MessengerButton } from './layout/messenger-button';
+import { EstimateButton } from './layout/estimate-button';
 
-import { routes } from './app.routes';
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withFetch()),
-    provideRouter(
-      routes,
-      withComponentInputBinding(),
-      withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
-    ),
-  ],
-};
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet, Header, Footer, MessengerButton, EstimateButton],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <app-header />
+    <main>
+      <router-outlet />
+    </main>
+    <app-footer />
+    <app-messenger-button />
+    <app-estimate-button />
+  `,
+})
+export class App {
+  constructor() {
+    inject(SeoService).start();
+  }
+}
