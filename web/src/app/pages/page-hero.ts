@@ -44,12 +44,20 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       margin: 0;
     }
   `,
+  // Content placed inside <app-page-hero> (breadcrumbs, buttons) shows under the text.
   template: `
-    <img [src]="image()" alt="" />
+    @if (image()) {
+      <img [src]="image()" alt="" />
+    }
     <div class="container">
-      <span class="eyebrow">{{ eyebrow() }}</span>
+      @if (eyebrow()) {
+        <span class="eyebrow">{{ eyebrow() }}</span>
+      }
       <h1>{{ title() }}</h1>
-      <p>{{ subtitle() }}</p>
+      @if (subtitle()) {
+        <p>{{ subtitle() }}</p>
+      }
+      <ng-content />
     </div>
   `,
 })
@@ -57,5 +65,5 @@ export class PageHero {
   readonly eyebrow = input('');
   readonly title = input.required<string>();
   readonly subtitle = input('');
-  readonly image = input.required<string>();
+  readonly image = input('');
 }

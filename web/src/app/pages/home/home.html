@@ -96,7 +96,7 @@
     </div>
     <div class="service-grid">
       @for (service of site.services; track service.key; let i = $index) {
-        <a class="service" [routerLink]="'/services'" [fragment]="service.key" [appReveal]="i * 90">
+        <a class="service" [routerLink]="['/', service.key]" [appReveal]="(i % 4) * 90">
           <img [src]="service.imageUrl" [alt]="service.title" loading="lazy" />
           <div class="service-body">
             <span class="service-icon"><app-icon [name]="service.icon" /></span>

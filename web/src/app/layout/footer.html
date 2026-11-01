@@ -25,7 +25,7 @@
       <h4>Services</h4>
       <ul>
         @for (service of site.services; track service.key) {
-          <li><a routerLink="/services" [fragment]="service.key">{{ service.title }}</a></li>
+          <li><a [routerLink]="['/', service.key]">{{ service.title }}</a></li>
         }
       </ul>
     </div>

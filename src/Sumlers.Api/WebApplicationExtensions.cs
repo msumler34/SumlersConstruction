@@ -20,7 +20,6 @@ public static class WebApplicationExtensions
         if (!app.Environment.IsDevelopment()) app.UseHsts();
 
         app.Use(AddSecurityHeaders);
-        app.UseDefaultFiles();
         app.UseStaticFiles();
         app.UseUploadedFiles();
         app.UseRateLimiter();
@@ -34,8 +33,8 @@ public static class WebApplicationExtensions
         app.MapSumlersHealthChecks();
         app.MapGet("/api/{**path}", () => Results.NotFound());
 
-        // Angular handles client-side routes such as /services and /contact.
-        app.MapFallbackToFile("index.html");
+        // Every page address serves the Angular app, with that page's title and description already in it.
+        app.MapPageEndpoints();
         return app;
     }
 

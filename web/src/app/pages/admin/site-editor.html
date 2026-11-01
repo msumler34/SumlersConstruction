@@ -1,7 +1,7 @@
 <header class="top">
   <div>
     <h1>Business info</h1>
-    <p>Contact details, social links, photos, services and reviews shown across the whole site.</p>
+    <p>Contact details, social links, home page text, photos and reviews. Services and their pages are on the <strong>Service pages</strong> tab.</p>
   </div>
 </header>
 
@@ -46,7 +46,8 @@
       <div class="grid2">
         <div class="field">
           <label for="serviceArea">Service area</label>
-          <input id="serviceArea" [(ngModel)]="d.serviceArea" placeholder="Serving the tri-county area" />
+          <input id="serviceArea" [(ngModel)]="d.serviceArea" placeholder="Serving Springfield, Riverton, Oak Hill and Green County" />
+          <small class="hint">Name your towns and county. Google uses this for "near me" searches, and every service page shows it.</small>
         </div>
         <div class="field">
           <label for="hours">Hours</label>
@@ -97,65 +98,6 @@
       </div>
       @if (d.heroImageUrl) {
         <img class="hero-preview" [src]="d.heroImageUrl" alt="Landing page photo preview" />
-      }
-    </section>
-
-    <!-- Services -->
-    <section class="panel" data-list="services">
-      <div class="panel-head">
-        <h2><app-icon name="hammer" /> Services</h2>
-        <button type="button" class="btn btn--outline btn--sm"
-          (click)="add(d.services, { key: '', title: '', summary: '', icon: 'hammer', imageUrl: '', highlights: [] }, 'services')">
-          <app-icon name="plus" /> Add service
-        </button>
-      </div>
-      @for (s of d.services; track $index; let i = $index, first = $first, last = $last) {
-        <div class="item">
-          <div class="item-head">
-            <strong>{{ s.title || 'New service' }}</strong>
-            <div class="item-actions">
-              <button type="button" class="icon-btn" (click)="move(d.services, i, -1)" [disabled]="first" title="Move up" aria-label="Move up">▲</button>
-              <button type="button" class="icon-btn" (click)="move(d.services, i, 1)" [disabled]="last" title="Move down" aria-label="Move down">▼</button>
-              <button type="button" class="icon-btn danger" (click)="remove(d.services, i)" title="Remove" aria-label="Remove service">
-                <app-icon name="trash" />
-              </button>
-            </div>
-          </div>
-          <div class="grid2">
-            <div class="field">
-              <label [for]="'svc-title-' + i">Title *</label>
-              <input [id]="'svc-title-' + i" [(ngModel)]="s.title" />
-            </div>
-            <div class="field">
-              <label [for]="'svc-icon-' + i">Icon</label>
-              <div class="icon-pick">
-                <span class="icon-preview"><app-icon [name]="s.icon" /></span>
-                <select [id]="'svc-icon-' + i" [(ngModel)]="s.icon">
-                  @for (icon of serviceIcons; track icon) {
-                    <option [value]="icon">{{ icon }}</option>
-                  }
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="field">
-            <label [for]="'svc-summary-' + i">Description</label>
-            <textarea [id]="'svc-summary-' + i" rows="3" [(ngModel)]="s.summary"></textarea>
-          </div>
-          <div class="grid2">
-            <div class="field">
-              <label [for]="'svc-image-' + i">Photo</label>
-              <app-image-field [inputId]="'svc-image-' + i" [(value)]="s.imageUrl" (valueChange)="changed()" />
-            </div>
-            <div class="field">
-              <label [for]="'svc-hl-' + i">Highlights (one per line)</label>
-              <textarea [id]="'svc-hl-' + i" rows="3" [ngModel]="highlightsText(s.highlights)"
-                (ngModelChange)="setHighlights(s, $event)"></textarea>
-            </div>
-          </div>
-        </div>
-      } @empty {
-        <p class="hint">No services yet.</p>
       }
     </section>
 
@@ -335,7 +277,8 @@
 
     <!-- Google -->
     <section class="panel">
-      <h2><app-icon name="eye" /> How the site shows up on Google</h2>
+      <h2><app-icon name="eye" /> How the home page shows up on Google</h2>
+      <p class="hint">Each service page has its own Google title and description on the Service pages tab.</p>
       <div class="field">
         <label for="seoTitle">Page title ({{ d.seo.title.length }}/70)</label>
         <input id="seoTitle" maxlength="70" [(ngModel)]="d.seo.title" />
@@ -344,6 +287,14 @@
         <label for="seoDescription">Description ({{ d.seo.description.length }}/300)</label>
         <textarea id="seoDescription" rows="2" maxlength="300" [(ngModel)]="d.seo.description"></textarea>
         <small class="hint">One or two sentences about what you do and where. Google shows this under the title in search results.</small>
+      </div>
+      <div class="field">
+        <label for="siteUrl">Website address</label>
+        <input id="siteUrl" type="url" [(ngModel)]="d.seo.siteUrl" placeholder="https://sumlersconstruction.com" />
+        <small class="hint">
+          The address customers use, with nothing after the name. Google links and the sitemap use it. Leave it empty
+          until the domain works with https.
+        </small>
       </div>
     </section>
   </div>

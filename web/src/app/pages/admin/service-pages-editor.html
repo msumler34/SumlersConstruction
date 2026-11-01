@@ -1,0 +1,319 @@
+<header class="top">
+  <div>
+    <h1>Service pages</h1>
+    <p>Each service has its own page that Google can show for searches like "deck builders near me".</p>
+  </div>
+</header>
+
+@if (message(); as m) {
+  <p class="msg" [class.error]="m.kind === 'error'" role="status">{{ m.text }}</p>
+}
+
+@let d = draft();
+@if (d) {
+  <div class="sections" (input)="changed()" (change)="changed()">
+    <!-- Overview page -->
+    <section class="panel" data-list="overview">
+      <div class="panel-head">
+        <h2><app-icon name="hammer" /> Services overview page</h2>
+        <a class="btn btn--outline btn--sm" href="/services" target="_blank" rel="noopener"><app-icon name="eye" /> View page</a>
+      </div>
+      <p class="hint">The /services page that lists every service.</p>
+      <div class="grid2">
+        <div class="field">
+          <label for="sp-eyebrow">Small line above the headline</label>
+          <input id="sp-eyebrow" [(ngModel)]="d.servicesPage.eyebrow" placeholder="Our services" />
+        </div>
+        <div class="field">
+          <label for="sp-title">Headline</label>
+          <input id="sp-title" [(ngModel)]="d.servicesPage.title" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="sp-text">Text under the headline</label>
+        <textarea id="sp-text" rows="2" [(ngModel)]="d.servicesPage.text"></textarea>
+      </div>
+      <div class="field">
+        <label for="sp-image">Top photo</label>
+        <app-image-field inputId="sp-image" [(value)]="d.servicesPage.imageUrl" (valueChange)="changed()" />
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="sp-more-title">"And much more" heading</label>
+          <input id="sp-more-title" [(ngModel)]="d.servicesPage.moreTitle" />
+          <label for="sp-more-text" class="gap">"And much more" text</label>
+          <textarea id="sp-more-text" rows="3" [(ngModel)]="d.servicesPage.moreText"></textarea>
+        </div>
+        <div class="field">
+          <label for="sp-more-items">Other jobs you do (one per line)</label>
+          <textarea id="sp-more-items" rows="7" [ngModel]="linesText(d.servicesPage.moreItems)"
+            (ngModelChange)="setLines(d.servicesPage, 'moreItems', $event)"></textarea>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="sp-seo-title">Google title ({{ d.servicesPage.seoTitle.length }}/70)</label>
+          <input id="sp-seo-title" maxlength="70" [(ngModel)]="d.servicesPage.seoTitle" />
+        </div>
+        <div class="field">
+          <label for="sp-seo-description">Google description ({{ d.servicesPage.seoDescription.length }}/300)</label>
+          <textarea id="sp-seo-description" rows="2" maxlength="300" [(ngModel)]="d.servicesPage.seoDescription"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section class="panel" data-list="services">
+      <div class="panel-head">
+        <h2><app-icon name="tools" /> Services</h2>
+        <button type="button" class="btn btn--outline btn--sm" (click)="add(d.services, newService(), 'services')">
+          <app-icon name="plus" /> Add service
+        </button>
+      </div>
+      <p class="hint">
+        Click a service to edit its card and its page. The order here is the order on the site. Only add services you
+        really offer, and give each page your own words and photos: Google ranks thin or copied pages lower.
+      </p>
+
+      @for (s of d.services; track $index; let i = $index, first = $first, last = $last) {
+        <details class="item svc">
+          <summary>
+            <span class="icon-preview small"><app-icon [name]="s.icon" /></span>
+            <span class="svc-name">
+              <strong>{{ s.title || 'New service' }}</strong>
+              <small>{{ address(s) }}</small>
+            </span>
+            <span class="item-actions">
+              <button type="button" class="icon-btn" (click)="$event.preventDefault(); move(d.services, i, -1)" [disabled]="first"
+                title="Move up" aria-label="Move up">▲</button>
+              <button type="button" class="icon-btn" (click)="$event.preventDefault(); move(d.services, i, 1)" [disabled]="last"
+                title="Move down" aria-label="Move down">▼</button>
+              <button type="button" class="icon-btn danger" (click)="$event.preventDefault(); remove(d.services, i)"
+                title="Remove" aria-label="Remove service">
+                <app-icon name="trash" />
+              </button>
+            </span>
+          </summary>
+
+          <div class="svc-body">
+            <h3>Card on the home page and in the menus</h3>
+            <div class="grid2">
+              <div class="field">
+                <label [for]="'svc-title-' + i">Service name *</label>
+                <input [id]="'svc-title-' + i" [(ngModel)]="s.title" placeholder="Kitchen Remodeling" />
+              </div>
+              <div class="field">
+                <label [for]="'svc-icon-' + i">Icon</label>
+                <div class="icon-pick">
+                  <span class="icon-preview"><app-icon [name]="s.icon" /></span>
+                  <select [id]="'svc-icon-' + i" [(ngModel)]="s.icon">
+                    @for (icon of serviceIcons; track icon) {
+                      <option [value]="icon">{{ icon }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label [for]="'svc-summary-' + i">Short description (on the card)</label>
+              <textarea [id]="'svc-summary-' + i" rows="2" [(ngModel)]="s.summary"></textarea>
+            </div>
+            <div class="grid2">
+              <div class="field">
+                <label [for]="'svc-image-' + i">Photo (card and top of the page)</label>
+                <app-image-field [inputId]="'svc-image-' + i" [(value)]="s.imageUrl" (valueChange)="changed()" />
+              </div>
+              <div class="field">
+                <label [for]="'svc-hl-' + i">"What we do" list (one per line)</label>
+                <textarea [id]="'svc-hl-' + i" rows="4" [ngModel]="linesText(s.highlights)"
+                  (ngModelChange)="setLines(s, 'highlights', $event)"></textarea>
+              </div>
+            </div>
+
+            <h3>Page address</h3>
+            <div class="field">
+              <label [for]="'svc-key-' + i">Web address</label>
+              <div class="address">
+                <span>sumlersconstruction.com/</span>
+                <input [id]="'svc-key-' + i" [(ngModel)]="s.key" placeholder="kitchen-remodeling" />
+              </div>
+              <small class="hint">
+                Use the words people search for, joined with dashes. Leave it empty to make one from the name.
+                Try not to change it once Google lists the page. If you do, the old address keeps working and sends
+                visitors to the new one.
+              </small>
+              @if (s.previousKeys.length) {
+                <div class="old-keys">
+                  <small>Old addresses that redirect here:</small>
+                  @for (old of s.previousKeys; track old; let k = $index) {
+                    <span class="chip">
+                      /{{ old }}
+                      <button type="button" (click)="removePreviousKey(s, k)" aria-label="Stop redirecting this address">×</button>
+                    </span>
+                  }
+                </div>
+              }
+            </div>
+
+            <h3>Top of the page</h3>
+            <div class="field">
+              <label [for]="'svc-heading-' + i">Page headline</label>
+              <input [id]="'svc-heading-' + i" [(ngModel)]="s.page.heading" [placeholder]="s.title" />
+              <small class="hint">The big title on the page. Say what you do and for whom, for example "Custom decks built to last".</small>
+            </div>
+            <div class="field">
+              <label [for]="'svc-intro-' + i">Intro</label>
+              <textarea [id]="'svc-intro-' + i" rows="3" [(ngModel)]="s.page.intro"></textarea>
+            </div>
+
+            <div class="sub" [attr.data-list]="'sections-' + i">
+              <div class="panel-head">
+                <h3>Text sections</h3>
+                <button type="button" class="btn btn--outline btn--sm" (click)="add(s.page.sections, { title: '', text: '' }, 'sections-' + i)">
+                  <app-icon name="plus" /> Add section
+                </button>
+              </div>
+              <p class="hint">
+                Each section is a heading and its text. Leave a blank line between paragraphs. Mention your towns and
+                the kinds of jobs you do: that is what helps "near me" searches.
+              </p>
+              @for (block of s.page.sections; track $index; let j = $index, firstBlock = $first, lastBlock = $last) {
+                <div class="item">
+                  <div class="item-head">
+                    <strong>{{ block.title || 'New section' }}</strong>
+                    <div class="item-actions">
+                      <button type="button" class="icon-btn" (click)="move(s.page.sections, j, -1)" [disabled]="firstBlock" title="Move up" aria-label="Move up">▲</button>
+                      <button type="button" class="icon-btn" (click)="move(s.page.sections, j, 1)" [disabled]="lastBlock" title="Move down" aria-label="Move down">▼</button>
+                      <button type="button" class="icon-btn danger" (click)="remove(s.page.sections, j)" title="Remove" aria-label="Remove section">
+                        <app-icon name="trash" />
+                      </button>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label [for]="'sec-title-' + i + '-' + j">Heading</label>
+                    <input [id]="'sec-title-' + i + '-' + j" [(ngModel)]="block.title" />
+                  </div>
+                  <div class="field">
+                    <label [for]="'sec-text-' + i + '-' + j">Text</label>
+                    <textarea [id]="'sec-text-' + i + '-' + j" rows="6" [(ngModel)]="block.text"></textarea>
+                  </div>
+                </div>
+              } @empty {
+                <p class="hint">No sections yet. The page shows the short description until you add one.</p>
+              }
+            </div>
+
+            <div class="sub" [attr.data-list]="'photos-' + i">
+              <div class="panel-head">
+                <h3>Project photos</h3>
+                <button type="button" class="btn btn--outline btn--sm" (click)="add(s.page.gallery, { imageUrl: '', label: '', alt: '' }, 'photos-' + i)">
+                  <app-icon name="plus" /> Add photo
+                </button>
+              </div>
+              <div class="gallery-grid">
+                @for (g of s.page.gallery; track $index; let j = $index, firstPhoto = $first, lastPhoto = $last) {
+                  <div class="item">
+                    <div class="item-head">
+                      <strong>Photo {{ j + 1 }}</strong>
+                      <div class="item-actions">
+                        <button type="button" class="icon-btn" (click)="move(s.page.gallery, j, -1)" [disabled]="firstPhoto" title="Move earlier" aria-label="Move earlier">▲</button>
+                        <button type="button" class="icon-btn" (click)="move(s.page.gallery, j, 1)" [disabled]="lastPhoto" title="Move later" aria-label="Move later">▼</button>
+                        <button type="button" class="icon-btn danger" (click)="remove(s.page.gallery, j)" title="Remove" aria-label="Remove photo">
+                          <app-icon name="trash" />
+                        </button>
+                      </div>
+                    </div>
+                    <app-image-field [inputId]="'svc-photo-' + i + '-' + j" [(value)]="g.imageUrl" (valueChange)="changed()" />
+                    <div class="grid2">
+                      <div class="field">
+                        <label [for]="'svc-photo-label-' + i + '-' + j">Label</label>
+                        <input [id]="'svc-photo-label-' + i + '-' + j" [(ngModel)]="g.label" placeholder="Composite deck" />
+                      </div>
+                      <div class="field">
+                        <label [for]="'svc-photo-alt-' + i + '-' + j">Description</label>
+                        <input [id]="'svc-photo-alt-' + i + '-' + j" [(ngModel)]="g.alt" placeholder="Two-level deck with lighting" />
+                      </div>
+                    </div>
+                  </div>
+                } @empty {
+                  <p class="hint">No photos yet. Photos of your own finished jobs help the page most.</p>
+                }
+              </div>
+            </div>
+
+            <div class="sub" [attr.data-list]="'faqs-' + i">
+              <div class="panel-head">
+                <h3>Questions and answers</h3>
+                <button type="button" class="btn btn--outline btn--sm" (click)="add(s.page.faqs, { question: '', answer: '' }, 'faqs-' + i)">
+                  <app-icon name="plus" /> Add question
+                </button>
+              </div>
+              @for (faq of s.page.faqs; track $index; let j = $index, firstFaq = $first, lastFaq = $last) {
+                <div class="item">
+                  <div class="item-head">
+                    <strong>{{ faq.question || 'New question' }}</strong>
+                    <div class="item-actions">
+                      <button type="button" class="icon-btn" (click)="move(s.page.faqs, j, -1)" [disabled]="firstFaq" title="Move up" aria-label="Move up">▲</button>
+                      <button type="button" class="icon-btn" (click)="move(s.page.faqs, j, 1)" [disabled]="lastFaq" title="Move down" aria-label="Move down">▼</button>
+                      <button type="button" class="icon-btn danger" (click)="remove(s.page.faqs, j)" title="Remove" aria-label="Remove question">
+                        <app-icon name="trash" />
+                      </button>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label [for]="'faq-q-' + i + '-' + j">Question *</label>
+                    <input [id]="'faq-q-' + i + '-' + j" [(ngModel)]="faq.question" />
+                  </div>
+                  <div class="field">
+                    <label [for]="'faq-a-' + i + '-' + j">Answer *</label>
+                    <textarea [id]="'faq-a-' + i + '-' + j" rows="3" [(ngModel)]="faq.answer"></textarea>
+                  </div>
+                </div>
+              } @empty {
+                <p class="hint">No questions yet. Add the questions customers ask you on the phone.</p>
+              }
+            </div>
+
+            <h3>How this page shows up on Google</h3>
+            <div class="grid2">
+              <div class="field">
+                <label [for]="'svc-seo-title-' + i">Google title ({{ s.page.seoTitle.length }}/70)</label>
+                <input [id]="'svc-seo-title-' + i" maxlength="70" [(ngModel)]="s.page.seoTitle" [placeholder]="googleTitle(s, d)" />
+              </div>
+              <div class="field">
+                <label [for]="'svc-seo-description-' + i">Google description ({{ s.page.seoDescription.length }}/300)</label>
+                <textarea [id]="'svc-seo-description-' + i" rows="2" maxlength="300" [(ngModel)]="s.page.seoDescription"></textarea>
+              </div>
+            </div>
+            <div class="google" aria-label="Google result preview">
+              <small>{{ (d.seo.siteUrl || 'https://sumlersconstruction.com') + address(s) }}</small>
+              <strong>{{ googleTitle(s, d) }}</strong>
+              <p>{{ s.page.seoDescription || s.summary }}</p>
+            </div>
+            <small class="hint">
+              Put the service and your area in the title, for example "Deck Builders in Springfield | Sumlers Construction".
+            </small>
+
+            @if (s.key) {
+              <a class="btn btn--outline btn--sm view" [href]="'/' + s.key" target="_blank" rel="noopener">
+                <app-icon name="eye" /> View saved page
+              </a>
+            }
+          </div>
+        </details>
+      } @empty {
+        <p class="hint">No services yet.</p>
+      }
+    </section>
+  </div>
+
+  <div class="savebar" [class.show]="dirty()">
+    <span>You have unsaved changes.</span>
+    <div>
+      <button type="button" class="btn btn--outline btn--sm" (click)="discard()" [disabled]="busy()">Discard</button>
+      <button type="button" class="btn btn--primary btn--sm" (click)="save()" [disabled]="busy()">
+        {{ busy() ? 'Saving…' : 'Save changes' }}
+      </button>
+    </div>
+  </div>
+}

@@ -1,10 +1,60 @@
+/** A heading with text. Blank lines in the text start new paragraphs. */
+export interface TextBlock {
+  title: string;
+  text: string;
+}
+
+export interface Faq {
+  question: string;
+  answer: string;
+}
+
+/** The content of a service's own page at /{key}. */
+export interface ServicePage {
+  heading: string;
+  intro: string;
+  sections: TextBlock[];
+  gallery: GalleryImage[];
+  faqs: Faq[];
+  seoTitle: string;
+  seoDescription: string;
+}
+
 export interface ServiceOffering {
+  /** The page address: the service's page is at /{key}. */
   key: string;
   title: string;
   summary: string;
   icon: string;
   imageUrl: string;
   highlights: string[];
+  /** Earlier page addresses, which redirect to the current one. */
+  previousKeys: string[];
+  page: ServicePage;
+}
+
+/** Text on the /services overview page. */
+export interface ServicesPageText {
+  eyebrow: string;
+  title: string;
+  text: string;
+  imageUrl: string;
+  moreTitle: string;
+  moreText: string;
+  moreItems: string[];
+  seoTitle: string;
+  seoDescription: string;
+}
+
+/** What a page tells browsers and search engines, from /api/page-meta. */
+export interface PageMeta {
+  statusCode: number;
+  title: string;
+  description: string;
+  canonicalUrl: string;
+  imageUrl: string;
+  noIndex: boolean;
+  redirectTo: string | null;
 }
 
 export interface Testimonial {
@@ -43,6 +93,8 @@ export interface PageSection {
 export interface SeoText {
   title: string;
   description: string;
+  /** The main address, such as https://sumlersconstruction.com. */
+  siteUrl: string;
 }
 
 export interface SiteInfo {
@@ -64,6 +116,7 @@ export interface SiteInfo {
   whyUs: PageSection;
   process: PageSection;
   seo: SeoText;
+  servicesPage: ServicesPageText;
 }
 
 export interface EmailSettings {

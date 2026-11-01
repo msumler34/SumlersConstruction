@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using MimeKit;
 using Sumlers.Api.Backups;
 using Sumlers.Api.Email;
+using Sumlers.Api.Site;
 
 namespace Sumlers.Api.Tests;
 
@@ -43,6 +44,8 @@ public sealed class SumlersApiFactory : WebApplicationFactory<Program>
         {
             services.RemoveAll<IEmailSender>();
             services.AddSingleton<IEmailSender>(new RecordingEmailSender(this));
+            services.RemoveAll<IPageTemplate>();
+            services.AddSingleton<IPageTemplate>(new FixedPageTemplate());
             var worker = services.Single(s => s.ImplementationType == typeof(BackupWorker));
             services.Remove(worker);
         });
@@ -52,6 +55,16 @@ public sealed class SumlersApiFactory : WebApplicationFactory<Program>
     {
         base.Dispose(disposing);
         if (Directory.Exists(_DataDirectory)) Directory.Delete(_DataDirectory, recursive: true);
+    }
+
+    /// <summary>Stands in for the built Angular index.html, which the tests do not need.</summary>
+    private sealed class FixedPageTemplate : IPageTemplate
+    {
+        public const string Html = """
+            <!doctype html><html><head><title>Old title</title><meta name="description" content="Old description"><meta property="og:title" content="Old"></head><body><app-root></app-root></body></html>
+            """;
+
+        public string? Get() => WebRootPageTemplate.WithoutHeadTags(Html);
     }
 
     private sealed class RecordingEmailSender(SumlersApiFactory factory) : IEmailSender

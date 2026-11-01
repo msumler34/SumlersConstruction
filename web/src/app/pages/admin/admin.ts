@@ -5,14 +5,15 @@ import { Icon } from '../../shared/icon';
 import { BackupsTab } from './backups-tab';
 import { MessagesTab } from './messages-tab';
 import { PromotionsEditor } from './promotions-editor';
+import { ServicePagesEditor } from './service-pages-editor';
 import { SettingsTab } from './settings-tab';
 import { SiteEditor } from './site-editor';
 
-type Tab = 'promotions' | 'site' | 'messages' | 'settings' | 'backups';
+type Tab = 'promotions' | 'site' | 'services' | 'messages' | 'settings' | 'backups';
 
 @Component({
   selector: 'app-admin',
-  imports: [FormsModule, Icon, PromotionsEditor, SiteEditor, MessagesTab, SettingsTab, BackupsTab],
+  imports: [FormsModule, Icon, PromotionsEditor, SiteEditor, ServicePagesEditor, MessagesTab, SettingsTab, BackupsTab],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './admin.html',
   styleUrl: './admin.scss',
@@ -29,6 +30,7 @@ export class Admin {
   protected readonly tabs: { id: Tab; label: string; icon: string }[] = [
     { id: 'promotions', label: 'Promoted topics', icon: 'star' },
     { id: 'site', label: 'Business info', icon: 'home' },
+    { id: 'services', label: 'Service pages', icon: 'hammer' },
     { id: 'messages', label: 'Messages', icon: 'mail' },
     { id: 'settings', label: 'Settings', icon: 'tools' },
     { id: 'backups', label: 'Backups', icon: 'shield' },
