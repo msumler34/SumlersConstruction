@@ -2,7 +2,7 @@
 <article class="card">
   <div class="media">
     @if (promo.imageUrl) {
-      <img [src]="promo.imageUrl" [attr.srcset]="promo.imageUrl | srcset" sizes="(max-width: 600px) 100vw, (max-width: 980px) 50vw, 400px" [alt]="promo.title" loading="lazy" />
+      <img [src]="promo.imageUrl" [attr.srcset]="promo.imageUrl | srcset" sizes="(max-width: 600px) 92vw, (max-width: 980px) 46vw, 560px" [alt]="promo.title" loading="lazy" />
     } @else {
       <div class="placeholder"><app-icon name="hammer" /></div>
     }

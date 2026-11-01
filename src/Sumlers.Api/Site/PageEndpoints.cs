@@ -1,5 +1,6 @@
 using System.Text;
 using System.Xml.Linq;
+using Sumlers.Api.Promotions;
 
 namespace Sumlers.Api.Site;
 
@@ -26,7 +27,8 @@ public static class PageEndpoints
         return Results.Ok(meta with { StructuredData = null });
     }
 
-    private static async Task<IResult> ServePageAsync(HttpContext context, ISiteStore store, IPageTemplate template, CancellationToken ct)
+    private static async Task<IResult> ServePageAsync(
+        HttpContext context, ISiteStore store, IPromotionStore promotionStore, TimeProvider clock, IPageTemplate template, CancellationToken ct)
     {
         var html = template.Get();
         if (html is null) return Results.NotFound();
@@ -37,7 +39,9 @@ public static class PageEndpoints
 
         // Pages change whenever the owner saves, and a deploy changes the script names in the HTML.
         context.Response.Headers.CacheControl = "no-cache";
-        return Results.Content(PageHtml.Render(html, meta, site.BusinessName), "text/html; charset=utf-8", Encoding.UTF8, meta.StatusCode);
+        var promotions = await SiteEndpoints.ShownPromotionsAsync(promotionStore, clock, ct);
+        var data = PageData.Tags(site, promotions, isHome: context.Request.Path == "/");
+        return Results.Content(PageHtml.Render(html, meta, site.BusinessName, data), "text/html; charset=utf-8", Encoding.UTF8, meta.StatusCode);
     }
 
     private static async Task<IResult> GetSitemapAsync(HttpRequest request, ISiteStore store, CancellationToken ct)

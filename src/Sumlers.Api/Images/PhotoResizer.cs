@@ -5,11 +5,10 @@ namespace Sumlers.Api.Images;
 /// <summary>Turns a phone photo into a WebP small enough for the web, the right way up and without its camera data.</summary>
 public static class PhotoResizer
 {
-    private const int Quality = 80;
     private static readonly SKSamplingOptions _Sampling = new(SKCubicResampler.Mitchell);
 
     /// <summary>The photo as WebP, scaled down to fit the limits, or null when the data is not an image.</summary>
-    public static byte[]? ToWebP(Stream source, int maxWidth, int maxHeight = int.MaxValue)
+    public static byte[]? ToWebP(Stream source, int quality, int maxWidth, int maxHeight = int.MaxValue)
     {
         using var codec = SKCodec.Create(source);
         if (codec is null) return null;
@@ -22,7 +21,7 @@ public static class PhotoResizer
         using var resized = scale < 1 ? upright.Resize(Scaled(upright, scale), _Sampling) : null;
 
         using var image = SKImage.FromBitmap(resized ?? upright);
-        using var data = image.Encode(SKEncodedImageFormat.Webp, Quality);
+        using var data = image.Encode(SKEncodedImageFormat.Webp, quality);
         return data.ToArray();
     }
 

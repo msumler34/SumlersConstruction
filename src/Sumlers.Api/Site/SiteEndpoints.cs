@@ -17,11 +17,15 @@ public static class SiteEndpoints
             .AddEndpointFilter<SnapshotBeforeChangeFilter>();
     }
 
-    private static async Task<IResult> GetActivePromotionsAsync(IPromotionStore store, TimeProvider clock, CancellationToken ct)
+    private static async Task<IResult> GetActivePromotionsAsync(IPromotionStore store, TimeProvider clock, CancellationToken ct) =>
+        Results.Ok(await ShownPromotionsAsync(store, clock, ct));
+
+    /// <summary>The specials visitors see today.</summary>
+    public static async Task<IEnumerable<Promotion>> ShownPromotionsAsync(IPromotionStore store, TimeProvider clock, CancellationToken ct)
     {
         var today = DateOnly.FromDateTime(clock.GetLocalNow().DateTime);
         var promotions = await store.GetAllAsync(ct);
-        return Results.Ok(promotions.Where(p => p.IsShownOn(today)));
+        return promotions.Where(p => p.IsShownOn(today));
     }
 
     private static async Task<IResult> SaveSiteAsync(SiteOptions site, ISiteStore store, CancellationToken ct)

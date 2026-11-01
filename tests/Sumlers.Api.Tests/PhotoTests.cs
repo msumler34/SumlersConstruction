@@ -36,7 +36,7 @@ public sealed class PhotoTests(SumlersApiFactory factory) : IClassFixture<Sumler
     {
         using var source = new MemoryStream(Convert.FromBase64String(SidewaysJpeg));
 
-        using var turned = SKBitmap.Decode(PhotoResizer.ToWebP(source, 1000)!);
+        using var turned = SKBitmap.Decode(PhotoResizer.ToWebP(source, quality: 70, 1000)!);
 
         Assert.Equal((20, 40), (turned.Width, turned.Height));
         Assert.True(turned.GetPixel(10, 5).Red > 200, "The red half should be on top.");
@@ -48,14 +48,14 @@ public sealed class PhotoTests(SumlersApiFactory factory) : IClassFixture<Sumler
     {
         var name = SaveUpload(Jpeg(2000, 1000), ".jpg");
 
-        var response = await factory.CreateClient().GetAsync($"/uploads/{name}-960.webp");
+        var response = await factory.CreateClient().GetAsync($"/uploads/{name}-w960.webp");
 
         response.EnsureSuccessStatusCode();
         Assert.Equal("image/webp", response.Content.Headers.ContentType?.MediaType);
         Assert.Equal("public, max-age=31536000, immutable", response.Headers.CacheControl?.ToString());
         using var copy = SKBitmap.Decode(await response.Content.ReadAsByteArrayAsync());
         Assert.Equal((960, 480), (copy.Width, copy.Height));
-        Assert.True(File.Exists(Path.Combine(factory.DataDirectory, "uploads", $"{name}-960.webp")));
+        Assert.True(File.Exists(Path.Combine(factory.DataDirectory, "uploads", $"{name}-w960.webp")));
     }
 
     [Theory]
@@ -65,7 +65,7 @@ public sealed class PhotoTests(SumlersApiFactory factory) : IClassFixture<Sumler
     {
         name ??= SaveUpload(Jpeg(100, 100), ".jpg");
 
-        var response = await factory.CreateClient().GetAsync($"/uploads/{name}-{width}.webp");
+        var response = await factory.CreateClient().GetAsync($"/uploads/{name}-w{width}.webp");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }

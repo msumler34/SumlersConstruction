@@ -7,7 +7,8 @@ namespace Sumlers.Api.Site;
 /// <summary>Writes a page's <see cref="PageMeta"/> into the head of the Angular index.html.</summary>
 public static class PageHtml
 {
-    public static string Render(string template, PageMeta meta, string businessName)
+    /// <param name="extraTags">More head tags for this page, such as <see cref="PageData.Tags"/>.</param>
+    public static string Render(string template, PageMeta meta, string businessName, string extraTags = "")
     {
         var tags = new StringBuilder();
         tags.Append($"<title>{HtmlEncode(meta.Title)}</title>");
@@ -24,6 +25,7 @@ public static class PageHtml
 
         // The default encoder escapes <, > and &, so page text can never close the script tag.
         if (meta.StructuredData is { } data) tags.Append($"""<script type="application/ld+json">{JsonSerializer.Serialize(data)}</script>""");
+        tags.Append(extraTags);
 
         var headEnd = template.IndexOf("</head>", StringComparison.OrdinalIgnoreCase);
         return headEnd < 0 ? tags + template : template.Insert(headEnd, tags.ToString());

@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 /** The widths the server makes from each upload (PhotoSizeEndpoints.Widths). */
-const WIDTHS = [480, 960, 1440, 1920];
+const WIDTHS = [400, 680, 760, 960, 1280, 1920];
 const UPLOAD = /^\/uploads\/([0-9a-f]{32})\.(jpe?g|png|webp)$/i;
 
 /**
@@ -11,7 +11,7 @@ const UPLOAD = /^\/uploads\/([0-9a-f]{32})\.(jpe?g|png|webp)$/i;
 export function srcset(url: string | null | undefined): string | null {
   if (!url) return null;
   const upload = UPLOAD.exec(url);
-  if (upload) return WIDTHS.map((w) => `/uploads/${upload[1]}-${w}.webp ${w}w`).join(', ');
+  if (upload) return WIDTHS.map((w) => `/uploads/${upload[1]}-w${w}.webp ${w}w`).join(', ');
   if (url.startsWith('https://images.unsplash.com/')) return WIDTHS.map((w) => `${unsplashAt(url, w)} ${w}w`).join(', ');
   return null;
 }
