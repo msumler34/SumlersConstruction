@@ -79,7 +79,7 @@ interface PriceGuide {
 
       @if (submitted()) {
         <div class="success">
-          Thanks! We received your details. We’ll follow up with a clearer picture and next steps.
+          Thanks! Your details have been sent. We’ll follow up soon.
         </div>
       }
     </div>
@@ -122,6 +122,23 @@ export class Estimate {
   }
 
   submit() {
+    const guide = this.selectedGuide();
+    const subject = encodeURIComponent('Rough Estimate Request');
+    const body = encodeURIComponent(
+      `Name: ${this.name || 'Not given'}\n` +
+      `Project: ${guide?.label || this.projectType}\n` +
+      `Range: \[ {guide?.low.toLocaleString()} – \]{guide?.high.toLocaleString()}\n` +
+      `Phone: ${this.phone || 'Not given'}\n` +
+      `Email: ${this.email || 'Not given'}\n` +
+      `Notes: ${this.notes || 'None'}`
+    );
+
+    if (this.email) {
+      window.location.href = `mailto:mattsumler@gmail.com?subject=\( {subject}&body= \){body}`;
+    } else if (this.phone) {
+      window.location.href = `sms:8163042469?body=${body}`;
+    }
+
     this.submitted.set(true);
   }
 }
