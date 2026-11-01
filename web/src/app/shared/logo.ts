@@ -10,11 +10,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       gap: 12px;
       color: inherit;
     }
-    img {
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
-    }
     .word {
       display: grid;
       line-height: 1;
@@ -35,7 +30,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     }
   `,
   template: `
-    <img src="/sumler-logo.png" alt="Sumler's Construction and Remodeling" />
     <span class="word">
       <span class="name">Sumler's</span>
       <span class="sub">Construction and Remodeling</span>
