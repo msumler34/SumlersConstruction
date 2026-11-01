@@ -44,7 +44,7 @@ public static class AdminEndpoints
             return Results.BadRequest(new { error = $"Images must be smaller than {options.Value.MaxUploadBytes / 1024 / 1024} MB." });
         }
         await using var source = file.OpenReadStream();
-        if (!_ImageTypes.Contains(file.ContentType) || PhotoResizer.ToWebP(source, MaxPhotoSide, MaxPhotoSide) is not { } webp)
+        if (!_ImageTypes.Contains(file.ContentType) || PhotoResizer.ToWebP(source, quality: 80, MaxPhotoSide, MaxPhotoSide) is not { } webp)
         {
             return Results.BadRequest(new { error = "Upload a JPG, PNG or WebP image." });
         }

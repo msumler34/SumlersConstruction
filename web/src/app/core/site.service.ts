@@ -1,7 +1,6 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, of } from 'rxjs';
 import { Promotion, ServiceOffering, ServicePage, ServicesPageText, SiteInfo } from './models';
 
 export const EMPTY_SERVICE_PAGE: ServicePage = {
@@ -60,9 +59,7 @@ export class SiteService {
   private readonly loadedState = signal(false);
   readonly loaded = this.loadedState.asReadonly();
 
-  private readonly promotions = toSignal(
-    this.http.get<Promotion[]>('/api/promotions').pipe(catchError(() => of([] as Promotion[]))),
-  );
+  private readonly promotions = signal<Promotion[] | undefined>(undefined);
 
   readonly promotionsLoaded = computed(() => this.promotions() !== undefined);
   readonly featuredPromotion = computed(() => this.promotions()?.find((p) => p.isFeatured) ?? null);
@@ -75,7 +72,17 @@ export class SiteService {
   readonly emailHref = computed(() => 'mailto:' + this.site().email);
 
   constructor() {
+    const data = pageData(inject(DOCUMENT));
+    if (data) {
+      this.setSite(withPageDefaults({ ...FALLBACK_SITE, ...data.site }));
+      this.promotions.set(data.promotions);
+      return;
+    }
     this.reload();
+    this.http.get<Promotion[]>('/api/promotions').subscribe({
+      next: (promotions) => this.promotions.set(promotions),
+      error: () => this.promotions.set([]),
+    });
   }
 
   /** Fetches the site details again, for example after the admin saves Business Info. */
@@ -89,6 +96,20 @@ export class SiteService {
   private setSite(site: SiteInfo): void {
     this.siteState.set(site);
     this.loadedState.set(true);
+  }
+}
+
+/**
+ * The site details and specials the server wrote into the page (PageData.cs), so the first view needs no API call.
+ * Null when the page came from the Angular dev server, which does not write them.
+ */
+export function pageData(document: Document): { site: SiteInfo; promotions: Promotion[] } | null {
+  const json = document.getElementById('page-data')?.textContent;
+  if (!json) return null;
+  try {
+    return JSON.parse(json);
+  } catch {
+    return null;
   }
 }
 

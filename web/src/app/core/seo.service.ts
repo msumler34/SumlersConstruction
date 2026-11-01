@@ -3,8 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
-import { catchError, filter, map, of, switchMap } from 'rxjs';
+import { catchError, filter, map, of, skip, switchMap } from 'rxjs';
 import { PageMeta } from './models';
+import { pageData } from './site.service';
 
 /**
  * Keeps the tab title, description and Google tags right as visitors move between pages.
@@ -20,9 +21,12 @@ export class SeoService {
   private readonly document = inject(DOCUMENT);
 
   start(): void {
+    // The server wrote the first page's tags into its HTML, so only later pages need asking for.
+    const firstPageDone = pageData(this.document) ? 1 : 0;
     this.router.events
       .pipe(
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+        skip(firstPageDone),
         map((e) => e.urlAfterRedirects.split(/[?#]/)[0]),
         switchMap((path) => this.http.get<PageMeta>('/api/page-meta', { params: { path } }).pipe(catchError(() => of(null)))),
       )
