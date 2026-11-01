@@ -13,6 +13,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/contact/contact').then((m) => m.Contact),
   },
   {
+    path: 'estimate',
+    loadComponent: () => import('./pages/estimate').then((m) => m.Estimate),
+  },
+  {
     path: 'admin',
     loadComponent: () => import('./pages/admin/admin').then((m) => m.Admin),
   },
