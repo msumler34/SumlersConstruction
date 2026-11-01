@@ -134,7 +134,7 @@
             <div class="field">
               <label [for]="'svc-key-' + i">Web address</label>
               <div class="address">
-                <span>sumlersconstruction.com/</span>
+                <span>{{ (d.seo.siteUrl || 'https://sumlerhomes.com').replace('https://', '') }}/</span>
                 <input [id]="'svc-key-' + i" [(ngModel)]="s.key" placeholder="kitchen-remodeling" />
               </div>
               <small class="hint">
@@ -286,7 +286,7 @@
               </div>
             </div>
             <div class="google" aria-label="Google result preview">
-              <small>{{ (d.seo.siteUrl || 'https://sumlersconstruction.com') + address(s) }}</small>
+              <small>{{ (d.seo.siteUrl || 'https://sumlerhomes.com') + address(s) }}</small>
               <strong>{{ googleTitle(s, d) }}</strong>
               <p>{{ s.page.seoDescription || s.summary }}</p>
             </div>

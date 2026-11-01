@@ -34,7 +34,7 @@ public static partial class SiteValidator
             .AddIf(site.Gallery.Any(g => string.IsNullOrWhiteSpace(g.ImageUrl) || !ValidationErrors.IsSafeUrl(g.ImageUrl)), nameof(site.Gallery), "Every gallery photo needs an image starting with https:// or /.")
             .AddIf(site.Hero is { } hero && (hero.Title.Length > 80 || hero.Highlight.Length > 80 || hero.Text.Length > 400), nameof(site.Hero), "The headline is too long (80 characters per line, 400 for the text).")
             .AddIf(site.Seo is { } seo && (seo.Title.Length > 70 || seo.Description.Length > 300), nameof(site.Seo), "Keep the Google title under 70 characters and the description under 300.")
-            .AddIf(site.Seo is { } address && !IsSiteAddress(address.SiteUrl), nameof(site.Seo), "The website address must look like https://sumlersconstruction.com, with nothing after the name.");
+            .AddIf(site.Seo is { } address && !IsSiteAddress(address.SiteUrl), nameof(site.Seo), "The website address must look like https://sumlerhomes.com, with nothing after the name.");
         AddSectionErrors(errors, site.WhyUs, nameof(site.WhyUs), "Why choose us");
         AddSectionErrors(errors, site.Process, nameof(site.Process), "How we work");
         AddServicesPageErrors(errors, site.ServicesPage);
