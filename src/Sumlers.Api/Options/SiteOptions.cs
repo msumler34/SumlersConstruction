@@ -28,6 +28,7 @@ public sealed class SiteOptions
     public PageSection? WhyUs { get; set; }
     public PageSection? Process { get; set; }
     public SeoText? Seo { get; set; }
+    public ServicesPageText? ServicesPage { get; set; }
 
     /// <summary>Fills page-text sections that a saved site.json does not have yet.</summary>
     public SiteOptions WithMissingSectionsFrom(SiteOptions defaults)
@@ -36,6 +37,8 @@ public sealed class SiteOptions
         WhyUs ??= defaults.WhyUs;
         Process ??= defaults.Process;
         Seo ??= defaults.Seo;
+        ServicesPage ??= defaults.ServicesPage;
+        foreach (var service in Services) service.Page ??= new ServicePage();
         return this;
     }
 }
@@ -68,16 +71,65 @@ public sealed class SeoText
 {
     public string Title { get; set; } = "";
     public string Description { get; set; } = "";
+
+    /// <summary>The main address, such as https://sumlersconstruction.com. Google links and the sitemap use it.</summary>
+    public string SiteUrl { get; set; } = "";
+}
+
+/// <summary>Text on the /services overview page.</summary>
+public sealed class ServicesPageText
+{
+    public string Eyebrow { get; set; } = "";
+    public string Title { get; set; } = "";
+    public string Text { get; set; } = "";
+    public string ImageUrl { get; set; } = "";
+    public string MoreTitle { get; set; } = "";
+    public string MoreText { get; set; } = "";
+    public List<string> MoreItems { get; set; } = [];
+    public string SeoTitle { get; set; } = "";
+    public string SeoDescription { get; set; } = "";
 }
 
 public sealed class ServiceOffering
 {
+    /// <summary>The page address: the service page is at /{Key}.</summary>
     public string Key { get; set; } = "";
     public string Title { get; set; } = "";
     public string Summary { get; set; } = "";
     public string Icon { get; set; } = "";
     public string ImageUrl { get; set; } = "";
     public List<string> Highlights { get; set; } = [];
+
+    /// <summary>Earlier page addresses. They redirect to the current one, so old links and Google results keep working.</summary>
+    public List<string> PreviousKeys { get; set; } = [];
+
+    // Nullable so services saved before service pages existed still load.
+    public ServicePage? Page { get; set; }
+}
+
+/// <summary>The content of a service's own page.</summary>
+public sealed class ServicePage
+{
+    public string Heading { get; set; } = "";
+    public string Intro { get; set; } = "";
+    public List<TextBlock> Sections { get; set; } = [];
+    public List<GalleryImage> Gallery { get; set; } = [];
+    public List<Faq> Faqs { get; set; } = [];
+    public string SeoTitle { get; set; } = "";
+    public string SeoDescription { get; set; } = "";
+}
+
+/// <summary>A heading with text. Blank lines in the text start new paragraphs.</summary>
+public sealed class TextBlock
+{
+    public string Title { get; set; } = "";
+    public string Text { get; set; } = "";
+}
+
+public sealed class Faq
+{
+    public string Question { get; set; } = "";
+    public string Answer { get; set; } = "";
 }
 
 public sealed class Testimonial

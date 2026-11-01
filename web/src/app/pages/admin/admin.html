@@ -40,6 +40,9 @@
         @case ('site') {
           <app-site-editor />
         }
+        @case ('services') {
+          <app-service-pages-editor />
+        }
         @case ('messages') {
           <app-messages-tab (unreadChange)="unread.set($event)" />
         }

@@ -1,0 +1,150 @@
+@let site = siteService.site();
+
+@if (service(); as s) {
+  <app-page-hero [eyebrow]="s.title" [title]="s.page.heading || s.title" [subtitle]="s.page.intro || s.summary" [image]="s.imageUrl">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a routerLink="/">Home</a> <span aria-hidden="true">/</span>
+      <a routerLink="/services">Services</a> <span aria-hidden="true">/</span>
+      <span aria-current="page">{{ s.title }}</span>
+    </nav>
+    <div class="hero-actions">
+      <a class="btn btn--primary" routerLink="/contact" [queryParams]="{ service: s.title }">
+        Get a free estimate <app-icon name="arrow" />
+      </a>
+      @if (site.phone) {
+        <a class="btn btn--ghost" [href]="siteService.phoneHref()"><app-icon name="phone" /> {{ site.phone }}</a>
+      }
+    </div>
+  </app-page-hero>
+
+  <section class="section">
+    <div class="container layout">
+      <article class="content">
+        @for (block of s.page.sections; track $index) {
+          <section class="block" appReveal>
+            @if (block.title) {
+              <h2>{{ block.title }}</h2>
+            }
+            @for (p of paragraphs(block.text); track $index) {
+              <p>{{ p }}</p>
+            }
+          </section>
+        } @empty {
+          <section class="block">
+            <h2>{{ s.title }}</h2>
+            <p>{{ s.summary }}</p>
+          </section>
+        }
+      </article>
+
+      <aside class="card" appReveal>
+        @if (s.highlights.length) {
+          <h3>What we do</h3>
+          <ul class="checks">
+            @for (item of s.highlights; track item) {
+              <li><app-icon name="check" /> {{ item }}</li>
+            }
+          </ul>
+        }
+        <a class="btn btn--primary" routerLink="/contact" [queryParams]="{ service: s.title }">
+          Request a free estimate <app-icon name="arrow" />
+        </a>
+        <ul class="facts">
+          @if (site.phone) {
+            <li><app-icon name="phone" /><a [href]="siteService.phoneHref()">{{ site.phone }}</a></li>
+          }
+          @if (site.serviceArea) {
+            <li><app-icon name="pin" /><span>{{ site.serviceArea }}</span></li>
+          }
+          @if (site.hours) {
+            <li><app-icon name="clock" /><span>{{ site.hours }}</span></li>
+          }
+          @if (site.messengerUrl) {
+            <li><app-icon name="messenger" /><a [href]="site.messengerUrl" target="_blank" rel="noopener">Message us on Messenger</a></li>
+          }
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  @if (s.page.gallery.length) {
+    <section class="section section--sand">
+      <div class="container">
+        <div class="section-head section-head--center" appReveal>
+          <span class="eyebrow">Our work</span>
+          <h2>Recent {{ s.title.toLowerCase() }} projects</h2>
+        </div>
+        <div class="gallery">
+          @for (photo of s.page.gallery; track $index; let i = $index) {
+            <figure [appReveal]="(i % 4) * 70">
+              <img [src]="photo.imageUrl" [alt]="photo.alt || photo.label || s.title" loading="lazy" />
+              @if (photo.label) {
+                <figcaption>{{ photo.label }}</figcaption>
+              }
+            </figure>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  @if (s.page.faqs.length) {
+    <section class="section">
+      <div class="container faq-wrap">
+        <div class="section-head section-head--center" appReveal>
+          <span class="eyebrow">Questions</span>
+          <h2>{{ s.title }} questions we hear often</h2>
+        </div>
+        <div class="faqs" appReveal>
+          @for (faq of s.page.faqs; track $index) {
+            <details>
+              <summary>{{ faq.question }} <app-icon name="plus" /></summary>
+              @for (p of paragraphs(faq.answer); track $index) {
+                <p>{{ p }}</p>
+              }
+            </details>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  @if (otherServices().length) {
+    <section class="section section--dark">
+      <div class="container">
+        <div class="section-head section-head--center" appReveal>
+          <span class="eyebrow">More we do</span>
+          <h2>Other services</h2>
+        </div>
+        <ul class="others">
+          @for (other of otherServices(); track other.key; let i = $index) {
+            <li [appReveal]="(i % 4) * 70">
+              <a [routerLink]="['/', other.key]">
+                <span class="other-icon"><app-icon [name]="other.icon" /></span>
+                <span>{{ other.title }}</span>
+                <app-icon name="arrow" class="go" />
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    </section>
+  }
+
+  <section class="cta-band">
+    <div class="container cta-inner" appReveal>
+      <div>
+        <h2>Ready to talk about your {{ s.title.toLowerCase() }} project?</h2>
+        <p>Tell us what you have in mind. Estimates are always free, and we usually answer within a day.</p>
+      </div>
+      <div class="cta-actions">
+        <a routerLink="/contact" [queryParams]="{ service: s.title }" class="btn btn--dark">Request an estimate <app-icon name="arrow" /></a>
+        @if (site.phone) {
+          <a [href]="siteService.phoneHref()" class="btn btn--ghost"><app-icon name="phone" /> {{ site.phone }}</a>
+        }
+      </div>
+    </div>
+  </section>
+} @else if (siteService.loaded()) {
+  <app-not-found />
+}

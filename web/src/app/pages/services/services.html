@@ -1,51 +1,54 @@
 @let site = siteService.site();
+@let page = site.servicesPage;
 
-<app-page-hero
-  eyebrow="Our services"
-  title="Everything your home needs, built by one trusted crew"
-  subtitle="Decks and remodeling are our specialty, but if it is part of your home, we can help."
-  [image]="heroImage"
-/>
+<app-page-hero [eyebrow]="page.eyebrow" [title]="page.title || 'Our services'" [subtitle]="page.text" [image]="page.imageUrl" />
 
 <section class="section">
   <div class="container list">
     @for (service of site.services; track service.key; let odd = $odd) {
       <article class="service" [class.flip]="odd" [id]="service.key" appReveal>
-        <div class="media">
+        <a class="media" [routerLink]="['/', service.key]" [attr.aria-label]="service.title">
           <img [src]="service.imageUrl" [alt]="service.title" loading="lazy" />
-        </div>
+        </a>
         <div class="body">
           <span class="icon"><app-icon [name]="service.icon" /></span>
-          <h2>{{ service.title }}</h2>
+          <h2><a [routerLink]="['/', service.key]">{{ service.title }}</a></h2>
           <p>{{ service.summary }}</p>
           <ul>
             @for (item of service.highlights; track item) {
               <li><app-icon name="check" /> {{ item }}</li>
             }
           </ul>
-          <a class="btn btn--primary" routerLink="/contact" [queryParams]="{ service: service.title }">
-            Get a {{ service.title.toLowerCase() }} quote <app-icon name="arrow" />
-          </a>
+          <div class="actions">
+            <a class="btn btn--primary" [routerLink]="['/', service.key]">
+              More about {{ service.title.toLowerCase() }} <app-icon name="arrow" />
+            </a>
+            <a class="btn btn--outline" routerLink="/contact" [queryParams]="{ service: service.title }">Get a quote</a>
+          </div>
         </div>
       </article>
     }
   </div>
 </section>
 
-<section class="section section--dark">
-  <div class="container">
-    <div class="section-head section-head--center" appReveal>
-      <span class="eyebrow">And much more</span>
-      <h2>Don't see your project? Just ask.</h2>
-      <p>We handle residential work of every size. Here are a few more things we do often.</p>
+@if (page.moreTitle || page.moreItems.length) {
+  <section class="section section--dark">
+    <div class="container">
+      <div class="section-head section-head--center" appReveal>
+        <span class="eyebrow">And much more</span>
+        <h2>{{ page.moreTitle }}</h2>
+        @if (page.moreText) {
+          <p>{{ page.moreText }}</p>
+        }
+      </div>
+      <ul class="chips" appReveal>
+        @for (item of page.moreItems; track item) {
+          <li><app-icon name="check" /> {{ item }}</li>
+        }
+      </ul>
+      <div class="center">
+        <a routerLink="/contact" class="btn btn--primary">Tell us about your project <app-icon name="arrow" /></a>
+      </div>
     </div>
-    <ul class="chips" appReveal>
-      @for (item of alsoHelp; track item) {
-        <li><app-icon name="check" /> {{ item }}</li>
-      }
-    </ul>
-    <div class="center">
-      <a routerLink="/contact" class="btn btn--primary">Tell us about your project <app-icon name="arrow" /></a>
-    </div>
-  </div>
-</section>
+  </section>
+}

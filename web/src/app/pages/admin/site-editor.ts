@@ -1,23 +1,10 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  Injector,
-  afterNextRender,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AdminService } from '../../core/admin.service';
-import { SiteInfo } from '../../core/models';
-import { SiteService } from '../../core/site.service';
 import { Icon } from '../../shared/icon';
 import { ImageField } from '../../shared/image-field';
-import { AdminMessage, describeError } from './admin-errors';
+import { SiteDraftEditor } from './site-draft-editor';
 
-/** Edits everything in /api/site: contact details, social links, photos, services, gallery and reviews. */
+/** Edits the business details and home page in /api/site: contact details, social links, photos, gallery and reviews. */
 @Component({
   selector: 'app-site-editor',
   imports: [FormsModule, Icon, ImageField],
@@ -25,133 +12,7 @@ import { AdminMessage, describeError } from './admin-errors';
   templateUrl: './site-editor.html',
   styleUrls: ['./admin-shared.scss', './site-editor.scss'],
 })
-export class SiteEditor {
-  private readonly admin = inject(AdminService);
-  private readonly siteService = inject(SiteService);
-  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
-  private readonly injector = inject(Injector);
-
-  protected readonly serviceIcons = ['deck', 'home', 'porch', 'tools', 'hammer', 'ruler', 'shield', 'handshake'];
+export class SiteEditor extends SiteDraftEditor {
   protected readonly pointIcons = ['check', 'shield', 'ruler', 'handshake', 'clock', 'star', 'hammer', 'tools', 'home', 'chat'];
-
-  /** Bound with ngModel and changed in place; `edits` ticks on every change so `dirty` recomputes. */
-  protected readonly draft = signal<SiteInfo | null>(null);
-  private readonly saved = signal('');
-  private readonly edits = signal(0);
-  protected readonly dirty = computed(() => {
-    this.edits();
-    const draft = this.draft();
-    return draft !== null && JSON.stringify(draft) !== this.saved();
-  });
-  protected readonly busy = signal(false);
-  protected readonly message = signal<AdminMessage>(null);
-
-  constructor() {
-    this.load();
-  }
-
-  protected changed(): void {
-    this.edits.update((n) => n + 1);
-  }
-
-  /** Adds an item at the end of its list, then scrolls to it and puts the cursor in its first box. */
-  protected add<T>(list: T[], item: T, listName: string): void {
-    list.push(item);
-    this.changed();
-    afterNextRender(() => this.revealLastItem(listName), { injector: this.injector });
-  }
-
-  private revealLastItem(listName: string): void {
-    const items = this.host.nativeElement.querySelectorAll<HTMLElement>(`[data-list="${listName}"] .item`);
-    const last = items[items.length - 1];
-    if (!last) return;
-    last.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    last.querySelector<HTMLElement>('input:not([type=file]), textarea')?.focus({ preventScroll: true });
-  }
-
-  protected remove<T>(list: T[], index: number): void {
-    list.splice(index, 1);
-    this.changed();
-  }
-
-  protected move<T>(list: T[], index: number, offset: number): void {
-    const target = index + offset;
-    if (target < 0 || target >= list.length) return;
-    [list[index], list[target]] = [list[target], list[index]];
-    this.changed();
-  }
-
-  protected highlightsText(highlights: string[]): string {
-    return highlights.join('\n');
-  }
-
-  protected setHighlights(service: { highlights: string[] }, text: string): void {
-    service.highlights = text.split('\n');
-    this.changed();
-  }
-
-  protected discard(): void {
-    this.draft.set(JSON.parse(this.saved()));
-    this.message.set(null);
-  }
-
-  protected save(): void {
-    const draft = this.draft();
-    if (!draft) return;
-    this.busy.set(true);
-    this.admin.saveSite(clean(draft)).subscribe({
-      next: (site) => {
-        this.accept(site);
-        this.siteService.reload();
-        this.message.set({ kind: 'ok', text: 'Saved. The whole site now shows the new details.' });
-      },
-      error: (err: HttpErrorResponse) => this.fail(err),
-    });
-  }
-
-  private load(): void {
-    this.busy.set(true);
-    this.admin.getSite().subscribe({
-      next: (site) => this.accept(site),
-      error: (err: HttpErrorResponse) => this.fail(err),
-    });
-  }
-
-  private accept(site: SiteInfo): void {
-    const copy = withDefaults(site);
-    this.saved.set(JSON.stringify(copy));
-    this.draft.set(structuredClone(copy));
-    this.busy.set(false);
-  }
-
-  private fail(err: HttpErrorResponse): void {
-    this.busy.set(false);
-    if (err.status === 401) this.admin.signOut();
-    this.message.set({ kind: 'error', text: describeError(err) });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-}
-
-function withDefaults(site: SiteInfo): SiteInfo {
-  return {
-    ...site,
-    address: site.address ?? '',
-    heroImageUrl: site.heroImageUrl ?? '',
-    services: site.services ?? [],
-    testimonials: site.testimonials ?? [],
-    gallery: site.gallery ?? [],
-    hero: site.hero ?? { eyebrow: '', title: '', highlight: '', text: '' },
-    whyUs: site.whyUs ?? { title: '', text: '', imageUrl: '', items: [] },
-    process: site.process ?? { title: '', text: '', imageUrl: '', items: [] },
-    seo: site.seo ?? { title: '', description: '' },
-  };
-}
-
-/** Trims text and drops blank highlight lines before saving. */
-function clean(site: SiteInfo): SiteInfo {
-  return {
-    ...site,
-    yearsInBusiness: Number(site.yearsInBusiness) || 0,
-    services: site.services.map((s) => ({ ...s, highlights: s.highlights.map((h) => h.trim()).filter(Boolean) })),
-  };
+  protected readonly savedMessage = 'Saved. The whole site now shows the new details.';
 }

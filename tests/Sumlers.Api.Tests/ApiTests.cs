@@ -131,7 +131,7 @@ public sealed class ApiTests(SumlersApiFactory factory) : IClassFixture<SumlersA
         var site = await factory.CreateClient().GetFromJsonAsync<SiteOptions>("/api/site");
         site!.Phone = "(555) 867-5309";
         site.Address = "12 Oak Lane";
-        site.Services.Add(new ServiceOffering { Title = "Deck Repair", Key = "decks" });
+        site.Services.Add(new ServiceOffering { Title = "Deck Repair", Key = "remodeling" });
 
         var response = await AdminClient().PutAsJsonAsync("/api/admin/site", site);
         var updated = await factory.CreateClient().GetFromJsonAsync<SiteOptions>("/api/site");
@@ -139,7 +139,7 @@ public sealed class ApiTests(SumlersApiFactory factory) : IClassFixture<SumlersA
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("12 Oak Lane", updated!.Address);
         Assert.Equal(updated.Services.Count, updated.Services.Select(s => s.Key).Distinct().Count());
-        Assert.Contains(updated.Services, s => s.Key == "decks-2");
+        Assert.Contains(updated.Services, s => s.Key == "remodeling-2");
 
         factory.SentEmails.Clear();
         await factory.CreateClient().PostAsJsonAsync("/api/contact", _ValidContact);

@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
         services.AddStore<ISettingsStore, JsonSettingsStore>();
         services.AddStore<IMessageStore, JsonMessageStore>();
 
+        services.AddSingleton<IPageTemplate, WebRootPageTemplate>();
         services.AddSingleton<IEmailSender, EmailSender>();
         services.AddSingleton<IAlertService, AlertService>();
         services.AddSingleton<ContactEmailBuilder>();
