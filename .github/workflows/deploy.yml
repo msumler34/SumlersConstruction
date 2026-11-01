@@ -1,0 +1,71 @@
+name: Build and deploy
+
+# Every push and pull request builds the site and runs the tests.
+# Only main (or a manual run on main) deploys to SmarterASP.NET.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never run two deploys at once; a newer push waits for the current one to finish.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # Not secret: these come from the SmarterASP publish settings. The password is the WEBDEPLOY_PASSWORD secret.
+  WEBDEPLOY_URL: https://win8129.site4now.net:8172/msdeploy.axd?site=mattsumler-001-site1
+  WEBDEPLOY_SITE: mattsumler-001-site1
+  WEBDEPLOY_USERNAME: mattsumler-001
+  SITE_URL: https://mattsumler-001-site1.ltempurl.com
+
+jobs:
+  build:
+    name: Build, test and deploy
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install web packages
+        working-directory: web
+        run: pnpm install --frozen-lockfile
+
+      # Writes the Angular app into src/Sumlers.Api/wwwroot, which the API publish then includes.
+      - name: Build Angular app
+        working-directory: web
+        run: pnpm build
+
+      - name: Run API tests
+        run: dotnet test tests/Sumlers.Api.Tests --configuration Release
+
+      - name: Publish API
+        run: dotnet publish src/Sumlers.Api --configuration Release --output publish
+
+      # The live admin key is not deployed from here: it is the Admin__ApiKey environment variable
+      # on the SmarterASP application pool, so it never leaves the server.
+      - name: Deploy to SmarterASP.NET
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        shell: pwsh
+        env:
+          WEBDEPLOY_PASSWORD: ${{ secrets.WEBDEPLOY_PASSWORD }}
+        run: ./.github/scripts/Deploy-WebDeploy.ps1 -PublishDirectory publish
+
+      - name: Check the live site
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        shell: pwsh
+        run: ./.github/scripts/Test-LiveSite.ps1 -SiteUrl $env:SITE_URL

@@ -24,6 +24,11 @@
     <None Remove="App_Data/**" />
   </ItemGroup>
 
+  <!-- The Development settings hold the local test admin key; they must never reach the live site. -->
+  <ItemGroup>
+    <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
   <!--
     "web" is a directory link to the Angular app in /web, so Solution Explorer shows one folder to
     right-click (Open in VS Code, Open in Terminal). Its files are excluded from this project.
