@@ -22,7 +22,7 @@
     </div>
 
     <div>
-      <h4>Services</h4>
+      <h2>Services</h2>
       <ul>
         @for (service of site.services; track service.key) {
           <li><a [routerLink]="['/', service.key]">{{ service.title }}</a></li>
@@ -31,7 +31,7 @@
     </div>
 
     <div>
-      <h4>Company</h4>
+      <h2>Company</h2>
       <ul>
         <li><a routerLink="/" fragment="work">Our Work</a></li>
         <li><a routerLink="/" fragment="process">How We Work</a></li>
@@ -41,7 +41,7 @@
     </div>
 
     <div>
-      <h4>Get in touch</h4>
+      <h2>Get in touch</h2>
       <ul class="contact">
         @if (site.phone) {
           <li><app-icon name="phone" /><a [href]="siteService.phoneHref()">{{ site.phone }}</a></li>

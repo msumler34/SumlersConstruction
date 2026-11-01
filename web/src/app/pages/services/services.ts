@@ -4,12 +4,13 @@ import { SiteService } from '../../core/site.service';
 import { scrollToFragmentWhenReady } from '../../shared/fragment-scroll';
 import { Icon } from '../../shared/icon';
 import { Reveal } from '../../shared/reveal';
+import { SrcsetPipe } from '../../shared/srcset';
 import { PageHero } from '../page-hero';
 
 /** The /services overview. Its text is edited in the admin page; each service links to its own page. */
 @Component({
   selector: 'app-services',
-  imports: [RouterLink, Icon, Reveal, PageHero],
+  imports: [RouterLink, Icon, Reveal, PageHero, SrcsetPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './services.html',
   styleUrl: './services.scss',

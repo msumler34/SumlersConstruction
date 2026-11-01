@@ -309,7 +309,7 @@
   display: grid;
   padding: 22px 26px;
   border-radius: var(--radius);
-  background: var(--amber);
+  background: var(--amber-dark);
   color: #fff;
   box-shadow: var(--shadow);
 
@@ -341,7 +341,7 @@
   display: flex;
   gap: 16px;
 
-  h4 {
+  h3 {
     font-size: 1.12rem;
     margin-bottom: 4px;
   }

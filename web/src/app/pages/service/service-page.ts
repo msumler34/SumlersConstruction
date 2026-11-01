@@ -3,13 +3,14 @@ import { Router, RouterLink } from '@angular/router';
 import { SiteService } from '../../core/site.service';
 import { Icon } from '../../shared/icon';
 import { Reveal } from '../../shared/reveal';
+import { SrcsetPipe } from '../../shared/srcset';
 import { NotFound } from '../not-found';
 import { PageHero } from '../page-hero';
 
 /** A service's own page, such as /deck-construction. Everything on it is edited in the admin page. */
 @Component({
   selector: 'app-service-page',
-  imports: [RouterLink, Icon, Reveal, PageHero, NotFound],
+  imports: [RouterLink, Icon, Reveal, PageHero, NotFound, SrcsetPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './service-page.html',
   styleUrl: './service-page.scss',

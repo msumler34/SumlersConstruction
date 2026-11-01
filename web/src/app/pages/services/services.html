@@ -8,7 +8,7 @@
     @for (service of site.services; track service.key; let odd = $odd) {
       <article class="service" [class.flip]="odd" [id]="service.key" appReveal>
         <a class="media" [routerLink]="['/', service.key]" [attr.aria-label]="service.title">
-          <img [src]="service.imageUrl" [alt]="service.title" loading="lazy" />
+          <img [src]="service.imageUrl" [attr.srcset]="service.imageUrl | srcset" sizes="(max-width: 600px) 100vw, (max-width: 980px) 50vw, 400px" [alt]="service.title" loading="lazy" />
         </a>
         <div class="body">
           <span class="icon"><app-icon [name]="service.icon" /></span>

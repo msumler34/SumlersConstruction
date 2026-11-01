@@ -12,6 +12,8 @@
   --paper: #ffffff;
   --amber: #c9803a;
   --amber-dark: #a8642a;
+  /* White text needs a darker amber: --amber-dark gives 4.6:1, --amber only 3:1. */
+  --amber-deep: #8c5122;
   --amber-light: #f3dcc2;
   --line: rgba(27, 35, 38, 0.1);
 
@@ -197,12 +199,12 @@ p {
 }
 
 .btn--primary {
-  background: var(--amber);
+  background: var(--amber-dark);
   color: #fff;
   box-shadow: 0 12px 24px -12px rgba(201, 128, 58, 0.8);
 
   &:hover {
-    background: var(--amber-dark);
+    background: var(--amber-deep);
   }
 }
 
@@ -251,7 +253,7 @@ p {
   display: inline-block;
   padding: 6px 12px;
   border-radius: 999px;
-  background: var(--amber);
+  background: var(--amber-dark);
   color: #fff;
   font-size: 0.72rem;
   font-weight: 700;

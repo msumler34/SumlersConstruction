@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using Sumlers.Api.Backups;
 using Sumlers.Api.Data;
+using Sumlers.Api.Images;
 using Sumlers.Api.Options;
 using Sumlers.Api.Promotions;
 
@@ -8,12 +9,10 @@ namespace Sumlers.Api.Admin;
 
 public static class AdminEndpoints
 {
-    private static readonly Dictionary<string, string> _ImageExtensions = new(StringComparer.OrdinalIgnoreCase)
-    {
-        ["image/jpeg"] = ".jpg",
-        ["image/png"] = ".png",
-        ["image/webp"] = ".webp",
-    };
+    private static readonly HashSet<string> _ImageTypes = new(StringComparer.OrdinalIgnoreCase) { "image/jpeg", "image/png", "image/webp" };
+
+    // Phone photos are often 4000 pixels wide and several MB; no page shows a photo bigger than this.
+    private const int MaxPhotoSide = 2560;
 
     public static void MapAdminEndpoints(this IEndpointRouteBuilder app)
     {
@@ -44,17 +43,17 @@ public static class AdminEndpoints
         {
             return Results.BadRequest(new { error = $"Images must be smaller than {options.Value.MaxUploadBytes / 1024 / 1024} MB." });
         }
-        if (!_ImageExtensions.TryGetValue(file.ContentType, out var extension))
+        await using var source = file.OpenReadStream();
+        if (!_ImageTypes.Contains(file.ContentType) || PhotoResizer.ToWebP(source, MaxPhotoSide, MaxPhotoSide) is not { } webp)
         {
             return Results.BadRequest(new { error = "Upload a JPG, PNG or WebP image." });
         }
 
         // The server picks the file name, so an uploaded name can never escape the uploads folder.
-        var fileName = $"{Guid.NewGuid():N}{extension}";
+        var fileName = $"{Guid.NewGuid():N}.webp";
         var directory = UploadsDirectory(dataFolder);
         Directory.CreateDirectory(directory);
-        await using var stream = File.Create(Path.Combine(directory, fileName));
-        await file.CopyToAsync(stream, ct);
+        await File.WriteAllBytesAsync(Path.Combine(directory, fileName), webp, ct);
         return Results.Ok(new { url = $"/uploads/{fileName}" });
     }
 

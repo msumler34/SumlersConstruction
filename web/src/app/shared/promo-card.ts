@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { RouterLink } from '@angular/router';
 import { Promotion } from '../core/models';
 import { Icon } from './icon';
+import { SrcsetPipe } from './srcset';
 
 /** One promoted topic. Internal links (starting with /) use the router, the rest open normally. */
 @Component({
   selector: 'app-promo-card',
-  imports: [RouterLink, Icon],
+  imports: [RouterLink, Icon, SrcsetPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './promo-card.html',
   styleUrl: './promo-card.scss',

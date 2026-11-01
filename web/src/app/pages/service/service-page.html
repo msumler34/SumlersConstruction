@@ -77,7 +77,7 @@
         <div class="gallery">
           @for (photo of s.page.gallery; track $index; let i = $index) {
             <figure [appReveal]="(i % 4) * 70">
-              <img [src]="photo.imageUrl" [alt]="photo.alt || photo.label || s.title" loading="lazy" />
+              <img [src]="photo.imageUrl" [attr.srcset]="photo.imageUrl | srcset" sizes="(max-width: 600px) 100vw, 50vw" [alt]="photo.alt || photo.label || s.title" loading="lazy" />
               @if (photo.label) {
                 <figcaption>{{ photo.label }}</figcaption>
               }
