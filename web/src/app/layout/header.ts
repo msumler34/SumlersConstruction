@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -25,7 +26,8 @@ export class Header {
       filter((e) => e instanceof NavigationEnd),
       map((e) => e.urlAfterRedirects),
     ),
-    { initialValue: this.router.url },
+    // The router's url is still "/" before the first navigation; the address bar already has the real page.
+    { initialValue: inject(DOCUMENT).location.pathname },
   );
 
   /** The header sits on top of the hero photo only at the top of the home page. */
