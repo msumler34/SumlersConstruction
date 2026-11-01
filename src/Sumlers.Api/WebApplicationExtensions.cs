@@ -4,6 +4,7 @@ using Sumlers.Api.Backups;
 using Sumlers.Api.Contact;
 using Sumlers.Api.Data;
 using Sumlers.Api.Health;
+using Sumlers.Api.Images;
 using Sumlers.Api.Messages;
 using Sumlers.Api.Settings;
 using Sumlers.Api.Site;
@@ -31,6 +32,7 @@ public static class WebApplicationExtensions
         app.MapSettingsEndpoints();
         app.MapMessageEndpoints();
         app.MapBackupEndpoints();
+        app.MapPhotoSizeEndpoints();
         app.MapSumlersHealthChecks();
         app.MapGet("/api/{**path}", () => Results.NotFound());
 

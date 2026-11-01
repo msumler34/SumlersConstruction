@@ -6,10 +6,11 @@ import { scrollToFragmentWhenReady } from '../../shared/fragment-scroll';
 import { Icon } from '../../shared/icon';
 import { PromoCard, splitLink } from '../../shared/promo-card';
 import { Reveal } from '../../shared/reveal';
+import { SrcsetPipe } from '../../shared/srcset';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, Icon, PromoCard, Reveal],
+  imports: [RouterLink, Icon, PromoCard, Reveal, SrcsetPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home.html',
   styleUrl: './home.scss',

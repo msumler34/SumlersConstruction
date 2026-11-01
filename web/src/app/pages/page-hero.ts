@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { SrcsetPipe } from '../shared/srcset';
 
 /** Short photo banner at the top of the inner pages. */
 @Component({
   selector: 'app-page-hero',
+  imports: [SrcsetPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
@@ -47,7 +49,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   // Content placed inside <app-page-hero> (breadcrumbs, buttons) shows under the text.
   template: `
     @if (image()) {
-      <img [src]="image()" alt="" />
+      <img [src]="image()" [attr.srcset]="image() | srcset" sizes="100vw" alt="" />
     }
     <div class="container">
       @if (eyebrow()) {

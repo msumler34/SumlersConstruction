@@ -16,6 +16,7 @@
   <ItemGroup>
     <PackageReference Include="MailKit" Version="4.18.2" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="10.0.14" />
+    <PackageReference Include="SkiaSharp" Version="3.119.2" />
   </ItemGroup>
 
   <!-- App_Data holds live promotions, uploads and the dev outbox. A publish must never overwrite it. -->

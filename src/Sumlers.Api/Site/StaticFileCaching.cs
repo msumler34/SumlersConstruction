@@ -6,7 +6,7 @@ namespace Sumlers.Api.Site;
 /// <summary>How long browsers keep each file, so a repeat visit loads the photos, scripts and fonts from its cache.</summary>
 public static partial class StaticFileCaching
 {
-    private const string OneYear = "public, max-age=31536000, immutable";
+    public const string OneYear = "public, max-age=31536000, immutable";
     private const string OneDay = "public, max-age=86400";
 
     /// <summary>Each build gives a changed script, style or font a new name, so a named file never changes.</summary>
