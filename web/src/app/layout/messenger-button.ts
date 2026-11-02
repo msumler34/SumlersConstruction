@@ -16,6 +16,6 @@ import { Icon } from '../shared/icon';
       text-decoration: none;
     }
   `,
-  template: `<a href="https://m.me/61596212907011" aria-label="Message us on Facebook"><app-icon name="messenger" /></a>`,
+  template: `<a href="sms:8163042469" aria-label="Text us"><app-icon name="messenger" /></a>`,
 })
 export class MessengerButton {}
