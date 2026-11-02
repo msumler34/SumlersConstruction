@@ -16,6 +16,6 @@ import { Icon } from '../shared/icon';
       text-decoration: none;
     }
   `,
-  template: `<a href="https://www.facebook.com/sumlersconstruction" target="_blank" rel="noopener" aria-label="Message us on Facebook"><app-icon name="facebook" /></a>`,
+  template: `<a href="https://www.facebook.com/people/Sumlers-Construction-and-Remodeling/61596212907011/" target="_blank" rel="noopener" aria-label="Message us on Facebook"><app-icon name="facebook" /></a>`,
 })
 export class MessengerButton {}
