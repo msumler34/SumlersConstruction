@@ -226,9 +226,9 @@
       @if (site.phone) {
         <a [href]="siteService.phoneHref()" class="btn btn--ghost"><app-icon name="phone" /> {{ site.phone }}</a>
       }
-      @if (site.messengerUrl) {
-        <a [href]="site.messengerUrl" target="_blank" rel="noopener" class="btn btn--ghost">
-          <app-icon name="messenger" /> Messenger
+      @if (site.facebookUrl) {
+        <a [href]="site.facebookUrl" target="_blank" rel="noopener" class="btn btn--ghost">
+          <app-icon name="facebook" /> Facebook
         </a>
       }
     </div>
