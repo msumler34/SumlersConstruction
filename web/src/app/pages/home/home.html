@@ -17,18 +17,20 @@
       }
     </h1>
     <p class="lead">{{ site.hero.text }}</p>
-    <div class="hero-actions">
-      <a routerLink="/contact" class="btn btn--primary">Get a free estimate <app-icon name="arrow" /></a>
-      <a href="sms:8163042469" class="btn btn--ghost">
-  <app-icon name="messenger" /> Message us
-</a>
-      @if (site.yearsInBusiness) {
-        <li><strong>{{ site.yearsInBusiness }}+</strong><span>Years building</span></li>
-      }
-      <li><strong>5.0</strong><span class="stars">★★★★★</span></li>
-      <li><strong>100%</strong><span>Licensed &amp; insured</span></li>
-      <li><strong>Free</strong><span>Written estimates</span></li>
-    </ul>
+   <div class="hero-actions">
+  <a routerLink="/contact" class="btn btn--primary">Get a free estimate <app-icon name="arrow" /></a>
+  <a href="sms:8163042469" class="btn btn--ghost">
+    <app-icon name="messenger" /> Message us
+  </a>
+</div>
+<ul class="trust">
+  @if (site.yearsInBusiness) {
+    <li><strong>{{ site.yearsInBusiness }}+</strong><span>Years building</span></li>
+  }
+  <li><strong>5.0</strong><span class="stars">★★★★★</span></li>
+  <li><strong>100%</strong><span>Licensed &amp; insured</span></li>
+  <li><strong>Free</strong><span>Written estimates</span></li>
+</ul>
   </div>
   <a href="#promotions" class="scroll-cue" aria-label="Scroll down"><span></span></a>
 </section>
