@@ -19,13 +19,9 @@
     <p class="lead">{{ site.hero.text }}</p>
     <div class="hero-actions">
       <a routerLink="/contact" class="btn btn--primary">Get a free estimate <app-icon name="arrow" /></a>
-      @if (site.messengerUrl) {
-        <a [href]="site.messengerUrl" target="_blank" rel="noopener" class="btn btn--ghost">
-          <app-icon name="messenger" /> Message us
-        </a>
-      }
-    </div>
-    <ul class="trust">
+      <a href="sms:8163042469" class="btn btn--ghost">
+  <app-icon name="messenger" /> Message us
+</a>
       @if (site.yearsInBusiness) {
         <li><strong>{{ site.yearsInBusiness }}+</strong><span>Years building</span></li>
       }
