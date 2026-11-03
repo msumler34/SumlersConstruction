@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { SiteService } from '../core/site.service';
 import { Icon } from '../shared/icon';
 
 @Component({
@@ -8,7 +9,7 @@ import { Icon } from '../shared/icon';
   styles: `
     :host { display: block; }
     a {
-      position: fixed; bottom: 1.2rem; right: 1.2rem; z-index: 1000;
+      position: fixed; bottom: 1.2rem; right: 1.2rem; z-index: 40;
       width: 56px; height: 56px; border-radius: 50%;
       background: #1877f2;
       color: white; display: flex; align-items: center; justify-content: center;
@@ -16,6 +17,14 @@ import { Icon } from '../shared/icon';
       text-decoration: none;
     }
   `,
-  template: `<a href="https://www.facebook.com/people/Sumlers-Construction-and-Remodeling/61596212907011/" target="_blank" rel="noopener" aria-label="Message us on Facebook"><app-icon name="facebook" /></a>`,
+  template: `
+    @if (siteService.site().facebookUrl) {
+      <a [href]="siteService.site().facebookUrl" target="_blank" rel="noopener" aria-label="Sumlers Construction on Facebook">
+        <app-icon name="facebook" />
+      </a>
+    }
+  `,
 })
-export class MessengerButton {}
+export class MessengerButton {
+  protected readonly siteService = inject(SiteService);
+}

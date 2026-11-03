@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-/** Floating button that takes people to the rough estimate tool. */
+/** Floating button that opens the contact form, which emails the request. */
 @Component({
   selector: 'app-estimate-button',
   imports: [RouterLink],
@@ -44,8 +44,8 @@ import { RouterLink } from '@angular/router';
     }
   `,
   template: `
-    <a routerLink="/estimate" aria-label="Get a ballpark price">
-      Get a ballpark price
+    <a routerLink="/contact" aria-label="Email us for a free estimate">
+      Email us
     </a>
   `,
 })

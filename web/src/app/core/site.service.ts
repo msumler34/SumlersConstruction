@@ -70,6 +70,7 @@ export class SiteService {
 
   readonly phoneHref = computed(() => 'tel:' + this.site().phone.replace(/[^\d+]/g, ''));
   readonly emailHref = computed(() => 'mailto:' + this.site().email);
+  readonly textHref = computed(() => 'sms:' + this.site().phone.replace(/[^\d]/g, ''));
 
   constructor() {
     const data = pageData(inject(DOCUMENT));
@@ -94,7 +95,7 @@ export class SiteService {
   }
 
   private setSite(site: SiteInfo): void {
-    this.siteState.set(site);
+    this.siteState.set({ ...site, facebookUrl: facebookPage(site.facebookUrl) });
     this.loadedState.set(true);
   }
 }
@@ -103,6 +104,16 @@ export class SiteService {
  * The site details and specials the server wrote into the page (PageData.cs), so the first view needs no API call.
  * Null when the page came from the Angular dev server, which does not write them.
  */
+
+/** The old short address is not the page. Use the real page unless the admin saved a different one. */
+const FACEBOOK_PAGE = "https://www.facebook.com/people/Sumlers-Construction-and-Remodeling/61596212907011/";
+function facebookPage(url: string): string {
+  const trimmed = (url ?? '').trim();
+  const bare = trimmed.replace(/\/$/, '');
+  if (!bare || bare === 'https://www.facebook.com/sumlersconstruction') return FACEBOOK_PAGE;
+  return trimmed;
+}
+
 export function pageData(document: Document): { site: SiteInfo; promotions: Promotion[] } | null {
   const json = document.getElementById('page-data')?.textContent;
   if (!json) return null;

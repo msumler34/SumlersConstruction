@@ -27,6 +27,7 @@ public static class PageMetaBuilder
             "" => Home(site, baseUrl),
             "services" => ServicesOverview(site, baseUrl),
             "contact" => Contact(site, baseUrl),
+            "estimate" => Hidden(site, baseUrl, "Free Estimate", StatusCodes.Status301MovedPermanently) with { RedirectTo = "/contact" },
             "admin" => Hidden(site, baseUrl, "Admin", StatusCodes.Status200OK),
             _ => ForService(site, key, baseUrl),
         };

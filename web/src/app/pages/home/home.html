@@ -19,7 +19,7 @@
     <p class="lead">{{ site.hero.text }}</p>
    <div class="hero-actions">
   <a routerLink="/contact" class="btn btn--primary">Get a free estimate <app-icon name="arrow" /></a>
-  <a href="sms:8163042469" class="btn btn--ghost">
+  <a [href]="siteService.textHref()" class="btn btn--ghost">
     <app-icon name="phone" /> Text a professional
   </a>
 </div>
@@ -161,7 +161,7 @@
     </div>
     @if (site.facebookUrl) {
       <div class="center">
-        <a href="https://www.facebook.com/people/Sumlers-Construction-and-Remodeling/61596212907011/" target="_blank" rel="noopener" class="btn btn--outline">
+        <a [href]="site.facebookUrl" target="_blank" rel="noopener" class="btn btn--outline">
           <app-icon name="facebook" /> See more on Facebook
         </a>
       </div>
@@ -227,7 +227,7 @@
         <a [href]="siteService.phoneHref()" class="btn btn--ghost"><app-icon name="phone" /> {{ site.phone }}</a>
       }
       @if (site.facebookUrl) {
-        <a href="https://www.facebook.com/people/Sumlers-Construction-and-Remodeling/61596212907011/" target="_blank" rel="noopener" class="btn btn--ghost">
+        <a [href]="site.facebookUrl" target="_blank" rel="noopener" class="btn btn--ghost">
           <app-icon name="facebook" /> Facebook
         </a>
       }
