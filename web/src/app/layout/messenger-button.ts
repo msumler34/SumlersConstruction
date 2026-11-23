@@ -19,7 +19,7 @@ import { Icon } from '../shared/icon';
   `,
   template: `
     @if (siteService.site().facebookUrl) {
-      <a [href]="siteService.site().facebookUrl" target="_blank" rel="noopener" aria-label="Sumlers Construction on Facebook">
+      <a [href]="siteService.site().facebookUrl" target="_blank" rel="noopener" aria-label="Sumler's Remodeling and Construction LLC on Facebook">
         <app-icon name="facebook" />
       </a>
     }
