@@ -30,9 +30,9 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     }
   `,
   template: `
-    <span class="word">
+    <span class="word" aria-label="Sumler's Remodeling and Construction LLC">
       <span class="name">Sumler's</span>
-      <span class="sub">Construction and Remodeling</span>
+      <span class="sub">Remodeling and Construction LLC</span>
     </span>
   `,
 })
