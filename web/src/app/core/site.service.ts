@@ -27,7 +27,7 @@ export const EMPTY_SERVICES_PAGE: ServicesPageText = {
 
 /** Used until /api/site answers, and if it fails, so the page never renders empty. */
 const FALLBACK_SITE: SiteInfo = {
-  businessName: 'Sumlers Construction',
+  businessName: "Sumler's Remodeling and Construction LLC",
   tagline: 'Custom decks, remodels and everything your home needs.',
   phone: '',
   email: '',

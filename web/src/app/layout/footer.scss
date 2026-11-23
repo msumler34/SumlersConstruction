@@ -21,6 +21,14 @@ app-logo {
   max-width: 320px;
 }
 
+.about .descriptor {
+  color: var(--cream);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
 h2 {
   font-family: var(--font-body);
   font-size: 0.78rem;
