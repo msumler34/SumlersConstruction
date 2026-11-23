@@ -22,6 +22,7 @@ public static class WebApplicationExtensions
 
         app.Use(AddSecurityHeaders);
         app.UseMiddleware<MainAddressRedirect>();
+        app.Use(IndexHtmlRedirect.InvokeAsync);
         app.UseStaticFiles(new StaticFileOptions { OnPrepareResponse = StaticFileCaching.ForWebRoot });
         app.UseUploadedFiles();
         app.UseRateLimiter();
@@ -33,6 +34,7 @@ public static class WebApplicationExtensions
         app.MapMessageEndpoints();
         app.MapBackupEndpoints();
         app.MapPhotoSizeEndpoints();
+        app.MapFavicons();
         app.MapSumlersHealthChecks();
         app.MapGet("/api/{**path}", () => Results.NotFound());
 
